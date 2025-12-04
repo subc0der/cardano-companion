@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-expo-app@latest cardano-companion-fresh --template blank-typescript)",
+      "Bash(npx expo install:*)",
+      "Bash(npm install:*)",
+      "Bash(cat:*)",
+      "Bash(dir \"C:\\Users\\mkhal\\dev\" /b)",
+      "Bash(dir:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx expo start --clear)",
+      "Bash(taskkill:*)",
+      "Bash(npx expo start --clear --port 8081)",
+      "Bash(npx expo start:*)",
+      "Bash(ipconfig:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
