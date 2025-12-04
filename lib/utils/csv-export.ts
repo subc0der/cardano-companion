@@ -14,6 +14,8 @@ const CSV_HEADERS = [
 ];
 
 const LOVELACE_DIVISOR = 1_000_000;
+// Number of characters to show from pool ID in notes
+const POOL_ID_PREFIX_LENGTH = 10;
 
 function formatAmount(lovelace: string, asset: string): string {
   if (asset === 'lovelace') {
@@ -25,7 +27,8 @@ function formatAmount(lovelace: string, asset: string): string {
 
 function escapeCSVField(field: string): string {
   // Prevent CSV injection - escape fields starting with formula characters
-  if (/^[=+\-@]/.test(field)) {
+  // Includes tab and pipe which can trigger formulas in some spreadsheets
+  if (/^[=+\-@\t|]/.test(field)) {
     field = "'" + field;
   }
   if (field.includes(',') || field.includes('"') || field.includes('\n')) {
@@ -38,7 +41,7 @@ function generateNotes(tx: Transaction): string {
   const notes: string[] = [];
 
   if (tx.type === 'stake_reward' && tx.poolId) {
-    notes.push(`Pool: ${tx.poolId.slice(0, 10)}...`);
+    notes.push(`Pool: ${tx.poolId.slice(0, POOL_ID_PREFIX_LENGTH)}...`);
   }
 
   return notes.join('; ');
@@ -125,11 +128,13 @@ export async function exportTransactionsToCSV(
       });
     }
 
-    const dates = filtered.map((tx) => tx.timestamp);
-    const dateRange = {
-      start: new Date(Math.min(...dates.map((d) => d.getTime()))),
-      end: new Date(Math.max(...dates.map((d) => d.getTime()))),
-    };
+    const dateRange = filtered.reduce(
+      (acc, tx) => ({
+        start: tx.timestamp < acc.start ? tx.timestamp : acc.start,
+        end: tx.timestamp > acc.end ? tx.timestamp : acc.end,
+      }),
+      { start: filtered[0].timestamp, end: filtered[0].timestamp }
+    );
 
     return {
       success: true,

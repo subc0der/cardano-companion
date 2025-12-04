@@ -7,7 +7,9 @@ const API_KEY = process.env.EXPO_PUBLIC_BLOCKFROST_KEY || '';
 const RATE_LIMIT_DELAY_MS = 100;
 // Number of transactions to fetch details for in parallel
 const BATCH_SIZE = 10;
-// Maximum pages to fetch (100 txs/page = 10,000 tx limit)
+// Blockfrost returns this many transactions per page
+const TRANSACTIONS_PER_PAGE = 100;
+// Maximum pages to fetch (TRANSACTIONS_PER_PAGE * MAX_PAGES = 10,000 tx limit)
 const MAX_PAGES = 100;
 // Maximum retry attempts for rate-limited requests
 const MAX_RETRIES = 3;
@@ -75,8 +77,8 @@ async function fetchBlockfrost<T>(
     }
     if (response.status === 429) {
       if (retryCount < MAX_RETRIES) {
-        // Exponential backoff: 200ms, 400ms, 800ms
-        await sleep(RATE_LIMIT_DELAY_MS * 2 * Math.pow(2, retryCount));
+        // Exponential backoff: 100ms, 200ms, 400ms
+        await sleep(RATE_LIMIT_DELAY_MS * Math.pow(2, retryCount));
         return fetchBlockfrost<T>(endpoint, retryCount + 1);
       }
       throw new Error('RATE_LIMITED');
@@ -104,7 +106,7 @@ export async function fetchTransactionHashes(
       allTxs.push(...txs);
       onProgress?.(allTxs.length);
 
-      if (txs.length < 100) break;
+      if (txs.length < TRANSACTIONS_PER_PAGE) break;
       page++;
       await sleep(RATE_LIMIT_DELAY_MS);
     } catch (error) {

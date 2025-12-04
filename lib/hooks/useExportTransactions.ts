@@ -53,9 +53,10 @@ export function useExportTransactions() {
             const accountAddresses =
               await blockfrost.getAccountAddresses(stakeAddress);
             allAddresses = accountAddresses.map((a) => a.address);
-          } catch {
-            // Fall back to single address but warn user
-            setWarning('Could not fetch all wallet addresses. Export may be incomplete.');
+          } catch (err) {
+            // Fall back to single address but warn user with details
+            const reason = err instanceof Error ? err.message : 'Unknown error';
+            setWarning(`Could not fetch all wallet addresses (${reason}). Export may be incomplete.`);
           }
         }
 
