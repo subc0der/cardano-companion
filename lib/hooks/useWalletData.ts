@@ -32,7 +32,7 @@ function hexToAscii(hex: string): string {
   try {
     let str = '';
     for (let i = 0; i < hex.length; i += 2) {
-      const charCode = parseInt(hex.substr(i, 2), 16);
+      const charCode = parseInt(hex.slice(i, i + 2), 16);
       if (charCode >= 32 && charCode <= 126) {
         str += String.fromCharCode(charCode);
       }
