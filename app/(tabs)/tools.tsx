@@ -1,18 +1,15 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
+import { ExportTool } from '../../components/tools/ExportTool';
 
 export default function ToolsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>TOOLS</Text>
-        <View style={styles.placeholder}>
-          <Text style={styles.placeholderText}>
-            Quick tools for Cardano operations
-          </Text>
-        </View>
+        <ExportTool />
       </ScrollView>
     </SafeAreaView>
   );
@@ -35,19 +32,5 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
     letterSpacing: 4,
     marginBottom: 24,
-  },
-  placeholder: {
-    backgroundColor: cyberpunk.bgSecondary,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: cyberpunk.bgTertiary,
-    padding: 40,
-    alignItems: 'center',
-  },
-  placeholderText: {
-    fontFamily: typography.fonts.primary,
-    fontSize: typography.sizes.sm,
-    color: cyberpunk.textSecondary,
-    textAlign: 'center',
   },
 });
