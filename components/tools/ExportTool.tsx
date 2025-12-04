@@ -103,13 +103,16 @@ export function ExportTool() {
 
                 <View style={styles.optionRow}>
                   <Text style={styles.optionLabel}>Assets</Text>
-                  <View style={styles.filterButtons}>
+                  <View style={styles.filterButtons} accessibilityRole="radiogroup">
                     <Pressable
                       onPress={() => setAssetFilter('all')}
                       style={[
                         styles.filterButton,
                         assetFilter === 'all' && styles.filterButtonActive,
                       ]}
+                      accessibilityRole="radio"
+                      accessibilityLabel="All assets"
+                      accessibilityState={{ selected: assetFilter === 'all' }}
                     >
                       <Text
                         style={[
@@ -126,6 +129,9 @@ export function ExportTool() {
                         styles.filterButton,
                         assetFilter === 'ada_only' && styles.filterButtonActive,
                       ]}
+                      accessibilityRole="radio"
+                      accessibilityLabel="ADA only"
+                      accessibilityState={{ selected: assetFilter === 'ada_only' }}
                     >
                       <Text
                         style={[

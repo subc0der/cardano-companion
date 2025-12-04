@@ -26,15 +26,17 @@ function formatAmount(lovelace: string, asset: string): string {
 }
 
 function escapeCSVField(field: string): string {
-  // Prevent CSV injection - escape fields starting with formula characters
+  let escaped = field;
+  // Prevent CSV injection by prepending single quote for formula characters
   // Includes tab and pipe which can trigger formulas in some spreadsheets
-  if (/^[=+\-@\t|]/.test(field)) {
-    field = "'" + field;
+  if (/^[=+\-@\t|]/.test(escaped)) {
+    escaped = "'" + escaped;
   }
-  if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-    return `"${field.replace(/"/g, '""')}"`;
+  // Wrap in quotes if contains special characters, and escape double quotes
+  if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
+    escaped = `"${escaped.replace(/"/g, '""')}"`;
   }
-  return field;
+  return escaped;
 }
 
 function generateNotes(tx: Transaction): string {

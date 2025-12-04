@@ -52,7 +52,9 @@ export function useExportTransactions() {
           try {
             const accountAddresses =
               await blockfrost.getAccountAddresses(stakeAddress);
-            allAddresses = accountAddresses.map((a) => a.address);
+            const stakeAddresses = accountAddresses.map((a) => a.address);
+            // Merge and deduplicate, preserving original wallet address
+            allAddresses = Array.from(new Set([walletAddress, ...stakeAddresses]));
           } catch (err) {
             // Fall back to single address but warn user with details
             const reason = err instanceof Error ? err.message : 'Unknown error';
@@ -63,10 +65,12 @@ export function useExportTransactions() {
         // Phase 2: Fetch transaction hashes from all addresses
         const allTxRefs: Awaited<ReturnType<typeof fetchTransactionHashes>> = [];
         const seenHashes = new Set<string>();
+        let totalFetched = 0;
 
         for (const address of allAddresses) {
           const txRefs = await fetchTransactionHashes(address, (count) => {
-            setProgress({ phase: 'fetching', current: count, total: 0 });
+            // Accumulate count across all addresses for smooth progress
+            setProgress({ phase: 'fetching', current: totalFetched + count, total: 0 });
           });
 
           for (const txRef of txRefs) {
@@ -75,6 +79,7 @@ export function useExportTransactions() {
               allTxRefs.push(txRef);
             }
           }
+          totalFetched += txRefs.length;
         }
 
         if (allTxRefs.length === 0 && !options.includeStakingRewards) {
