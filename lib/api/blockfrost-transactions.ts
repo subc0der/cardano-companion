@@ -2,9 +2,15 @@ import { Transaction, TransactionType } from '../types/transaction';
 
 const BASE_URL = 'https://cardano-mainnet.blockfrost.io/api/v0';
 const API_KEY = process.env.EXPO_PUBLIC_BLOCKFROST_KEY || '';
+
+// Rate limit delay between API calls to avoid 429 errors (Blockfrost free tier: 10 req/s)
 const RATE_LIMIT_DELAY_MS = 100;
+// Number of transactions to fetch details for in parallel
 const BATCH_SIZE = 10;
+// Maximum pages to fetch (100 txs/page = 10,000 tx limit)
 const MAX_PAGES = 100;
+// Maximum retry attempts for rate-limited requests
+const MAX_RETRIES = 3;
 
 interface BlockfrostTxRef {
   tx_hash: string;
@@ -55,7 +61,10 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchBlockfrost<T>(endpoint: string): Promise<T> {
+async function fetchBlockfrost<T>(
+  endpoint: string,
+  retryCount = 0
+): Promise<T> {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     headers: { project_id: API_KEY },
   });
@@ -65,6 +74,11 @@ async function fetchBlockfrost<T>(endpoint: string): Promise<T> {
       throw new Error('NOT_FOUND');
     }
     if (response.status === 429) {
+      if (retryCount < MAX_RETRIES) {
+        // Exponential backoff: 200ms, 400ms, 800ms
+        await sleep(RATE_LIMIT_DELAY_MS * 2 * Math.pow(2, retryCount));
+        return fetchBlockfrost<T>(endpoint, retryCount + 1);
+      }
       throw new Error('RATE_LIMITED');
     }
     throw new Error(`Blockfrost error: ${response.status}`);

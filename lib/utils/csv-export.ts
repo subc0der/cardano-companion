@@ -24,6 +24,10 @@ function formatAmount(lovelace: string, asset: string): string {
 }
 
 function escapeCSVField(field: string): string {
+  // Prevent CSV injection - escape fields starting with formula characters
+  if (/^[=+\-@]/.test(field)) {
+    field = "'" + field;
+  }
   if (field.includes(',') || field.includes('"') || field.includes('\n')) {
     return `"${field.replace(/"/g, '""')}"`;
   }
@@ -101,14 +105,13 @@ export async function exportTransactionsToCSV(
         success: false,
         filename: '',
         transactionCount: 0,
-        dateRange: { start: new Date(), end: new Date() },
         error: 'No transactions to export',
       };
     }
 
     const csv = generateCSV(filtered);
 
-    const timestamp = new Date().toISOString().split('T')[0];
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `cardano-transactions-${timestamp}.csv`;
     const file = new File(Paths.cache, filename);
 
@@ -139,7 +142,6 @@ export async function exportTransactionsToCSV(
       success: false,
       filename: '',
       transactionCount: 0,
-      dateRange: { start: new Date(), end: new Date() },
       error: error instanceof Error ? error.message : 'Export failed',
     };
   }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -21,7 +21,7 @@ export function ExportTool() {
   const [includeRewards, setIncludeRewards] = useState(true);
   const [assetFilter, setAssetFilter] = useState<AssetFilter>('all');
 
-  const { exportData, isLoading, progress, error, result, reset } =
+  const { exportData, isLoading, progress, error, warning, result, reset } =
     useExportTransactions();
 
   const hasWallet = !!(address || stakeAddress);
@@ -45,7 +45,7 @@ export function ExportTool() {
     });
   };
 
-  const getProgressText = (): string => {
+  const progressText = useMemo(() => {
     switch (progress.phase) {
       case 'fetching':
         return `Fetching transactions... ${progress.current}`;
@@ -56,7 +56,7 @@ export function ExportTool() {
       default:
         return '';
     }
-  };
+  }, [progress.phase, progress.current, progress.total]);
 
   return (
     <>
@@ -153,7 +153,7 @@ export function ExportTool() {
             {isLoading && (
               <View style={styles.progressContainer}>
                 <ActivityIndicator size="large" color={cyberpunk.neonMagenta} />
-                <Text style={styles.progressText}>{getProgressText()}</Text>
+                <Text style={styles.progressText}>{progressText}</Text>
               </View>
             )}
 
@@ -177,6 +177,9 @@ export function ExportTool() {
                   {result.transactionCount} transactions exported
                 </Text>
                 <Text style={styles.resultDetail}>File: {result.filename}</Text>
+                {warning && (
+                  <Text style={styles.warningText}>{warning}</Text>
+                )}
                 <View style={styles.actions}>
                   <CyberButton
                     title="DONE"
@@ -322,6 +325,14 @@ const styles = StyleSheet.create({
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
     color: cyberpunk.textSecondary,
+    marginBottom: 4,
+  },
+  warningText: {
+    fontFamily: typography.fonts.mono,
+    fontSize: typography.sizes.xs,
+    color: cyberpunk.warning,
+    textAlign: 'center',
+    marginTop: 8,
     marginBottom: 4,
   },
 });

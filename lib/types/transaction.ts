@@ -43,7 +43,7 @@ export interface ExportResult {
   success: boolean;
   filename: string;
   transactionCount: number;
-  dateRange: { start: Date; end: Date };
+  dateRange?: { start: Date; end: Date };
   error?: string;
 }
 

@@ -21,10 +21,12 @@ export function useExportTransactions() {
     total: 0,
   });
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [result, setResult] = useState<ExportResult | null>(null);
 
   const reset = useCallback(() => {
     setError(null);
+    setWarning(null);
     setResult(null);
     setProgress({ phase: 'fetching', current: 0, total: 0 });
   }, []);
@@ -37,6 +39,7 @@ export function useExportTransactions() {
     ) => {
       setIsLoading(true);
       setError(null);
+      setWarning(null);
       setResult(null);
 
       try {
@@ -51,7 +54,8 @@ export function useExportTransactions() {
               await blockfrost.getAccountAddresses(stakeAddress);
             allAddresses = accountAddresses.map((a) => a.address);
           } catch {
-            // Fall back to single address
+            // Fall back to single address but warn user
+            setWarning('Could not fetch all wallet addresses. Export may be incomplete.');
           }
         }
 
@@ -127,6 +131,7 @@ export function useExportTransactions() {
     isLoading,
     progress,
     error,
+    warning,
     result,
     reset,
   };
