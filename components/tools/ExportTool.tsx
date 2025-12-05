@@ -96,6 +96,7 @@ export function ExportTool() {
                   <Switch
                     value={includeRewards}
                     onValueChange={setIncludeRewards}
+                    accessibilityRole="switch"
                     accessibilityLabel="Include staking rewards"
                     accessibilityHint="Toggle to include or exclude staking rewards from the export"
                     trackColor={{

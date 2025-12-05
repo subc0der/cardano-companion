@@ -218,7 +218,9 @@ function classifyTransaction(
 ): TransactionType {
   if (isInput && !isOutput) return 'send';
   if (!isInput && isOutput) return 'receive';
-  if (isInput && isOutput) return 'send'; // Self-transfer counts as send (pays fee)
+  // Self-transfer: user sends to their own address. Classified as 'send' because
+  // the user pays the fee. In CSV export, this shows as negative net amount (the fee).
+  if (isInput && isOutput) return 'send';
   return 'unknown';
 }
 
@@ -276,6 +278,8 @@ export async function fetchStakingRewards(
       `/accounts/${stakeAddress}/rewards`
     );
 
+    // Staking rewards don't have a specific block - they're distributed at epoch boundaries.
+    // blockHeight is set to 0 to indicate "not applicable" for rewards.
     return rewards.map((reward) => ({
       txHash: `reward_epoch_${reward.epoch}`,
       blockHeight: 0,
