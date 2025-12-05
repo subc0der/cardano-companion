@@ -172,6 +172,9 @@ export function ExportTool() {
             {error && !isLoading && (
               <View style={styles.resultContainer}>
                 <Text style={styles.errorText}>{error}</Text>
+                {warning && (
+                  <Text style={styles.warningText}>{warning}</Text>
+                )}
                 <View style={styles.actions}>
                   <CyberButton
                     title="CLOSE"
