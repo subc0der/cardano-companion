@@ -104,13 +104,20 @@ export function useExportTransactions() {
           total: allTxRefs.length,
         });
 
-        const transactions = await fetchTransactionDetails(
+        const { transactions, failedCount } = await fetchTransactionDetails(
           allTxRefs,
           allAddresses,
           (current, total) => {
             setProgress({ phase: 'processing', current, total });
           }
         );
+
+        // Warn user if some transactions couldn't be fetched
+        if (failedCount > 0) {
+          setWarning(
+            `Could not fetch details for ${failedCount} transaction${failedCount > 1 ? 's' : ''}. Export may be incomplete.`
+          );
+        }
 
         // Phase 4: Fetch staking rewards if requested
         let allTransactions: Transaction[] = transactions;

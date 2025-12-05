@@ -120,13 +120,19 @@ export async function fetchTransactionHashes(
   return allTxs;
 }
 
+export interface FetchTransactionResult {
+  transactions: Transaction[];
+  failedCount: number;
+}
+
 export async function fetchTransactionDetails(
   txRefs: BlockfrostTxRef[],
   walletAddresses: string[],
   onProgress?: (current: number, total: number) => void
-): Promise<Transaction[]> {
+): Promise<FetchTransactionResult> {
   const transactions: Transaction[] = [];
   const addressSet = new Set(walletAddresses.map((a) => a.toLowerCase()));
+  let failedCount = 0;
 
   for (let i = 0; i < txRefs.length; i += BATCH_SIZE) {
     const batch = txRefs.slice(i, i + BATCH_SIZE);
@@ -140,13 +146,17 @@ export async function fetchTransactionDetails(
           ]);
           return { details, utxos, txRef };
         } catch {
+          // Individual transaction fetch failures are tracked but don't stop the export
           return null;
         }
       })
     );
 
     for (const result of results) {
-      if (!result) continue;
+      if (!result) {
+        failedCount++;
+        continue;
+      }
       const { details, utxos, txRef } = result;
 
       const tx = parseTransaction(details, utxos, txRef, addressSet);
@@ -159,7 +169,7 @@ export async function fetchTransactionDetails(
     await sleep(RATE_LIMIT_DELAY_MS * 2);
   }
 
-  return transactions;
+  return { transactions, failedCount };
 }
 
 function parseTransaction(

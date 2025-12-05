@@ -2,6 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { blockfrost } from '../api/blockfrost';
 import { useWalletStore } from '../stores/wallet';
 
+// Cardano policy IDs are 28 bytes = 56 hex characters
+const POLICY_ID_HEX_LENGTH = 56;
+// Number of characters to show when truncating hex strings for display
+const HEX_DISPLAY_TRUNCATE_LENGTH = 8;
+// Number of characters to show when truncating asset unit IDs
+const ASSET_UNIT_DISPLAY_TRUNCATE_LENGTH = 12;
+
 export interface WalletBalance {
   lovelace: string;
   ada: number;
@@ -22,9 +29,9 @@ function parseAssetUnit(unit: string): { policyId: string; assetName: string } {
   if (unit === 'lovelace') {
     return { policyId: '', assetName: '' };
   }
-  // Other assets: first 56 chars are policy ID, rest is asset name (hex)
-  const policyId = unit.slice(0, 56);
-  const assetNameHex = unit.slice(56);
+  // Other assets: first POLICY_ID_HEX_LENGTH chars are policy ID, rest is asset name (hex)
+  const policyId = unit.slice(0, POLICY_ID_HEX_LENGTH);
+  const assetNameHex = unit.slice(POLICY_ID_HEX_LENGTH);
   return { policyId, assetName: assetNameHex };
 }
 
@@ -37,9 +44,9 @@ function hexToAscii(hex: string): string {
         str += String.fromCharCode(charCode);
       }
     }
-    return str || hex.slice(0, 8);
+    return str || hex.slice(0, HEX_DISPLAY_TRUNCATE_LENGTH);
   } catch {
-    return hex.slice(0, 8);
+    return hex.slice(0, HEX_DISPLAY_TRUNCATE_LENGTH);
   }
 }
 
@@ -121,7 +128,7 @@ async function fetchWalletBalance(address: string): Promise<WalletBalance> {
       quantity: quantity.toString(),
       policyId,
       assetName,
-      displayName: hexToAscii(assetName) || unit.slice(0, 12),
+      displayName: hexToAscii(assetName) || unit.slice(0, ASSET_UNIT_DISPLAY_TRUNCATE_LENGTH),
     });
   }
 
