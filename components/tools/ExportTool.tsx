@@ -64,6 +64,9 @@ export function ExportTool() {
         onPress={handleOpenModal}
         style={[styles.toolCard, !hasWallet && styles.toolCardDisabled]}
         disabled={!hasWallet}
+        accessibilityRole="button"
+        accessibilityLabel="Export transaction history to CSV"
+        accessibilityHint="Opens a modal to configure and export your transaction history as a CSV file"
       >
         <Text style={styles.toolIcon}>📊</Text>
         <View style={styles.toolInfo}>
@@ -93,7 +96,8 @@ export function ExportTool() {
                   <Switch
                     value={includeRewards}
                     onValueChange={setIncludeRewards}
-                    accessibilityLabel="Include staking rewards in export"
+                    accessibilityLabel="Include staking rewards"
+                    accessibilityHint="Toggle to include or exclude staking rewards from the export"
                     trackColor={{
                       false: cyberpunk.bgTertiary,
                       true: cyberpunk.neonMagenta,

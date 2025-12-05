@@ -73,7 +73,7 @@ async function fetchBlockfrost<T>(
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw new Error('NOT_FOUND');
+      throw new Error('Resource not found');
     }
     if (response.status === 429) {
       if (retryCount < MAX_RETRIES) {
@@ -81,7 +81,7 @@ async function fetchBlockfrost<T>(
         await sleep(RATE_LIMIT_DELAY_MS * Math.pow(2, retryCount));
         return fetchBlockfrost<T>(path, retryCount + 1);
       }
-      throw new Error('RATE_LIMITED');
+      throw new Error('API rate limit exceeded. Please try again later.');
     }
     throw new Error(`Blockfrost error: ${response.status}`);
   }
@@ -110,7 +110,7 @@ export async function fetchTransactionHashes(
       page++;
       await sleep(RATE_LIMIT_DELAY_MS);
     } catch (error) {
-      if (error instanceof Error && error.message === 'NOT_FOUND') {
+      if (error instanceof Error && error.message === 'Resource not found') {
         break;
       }
       throw error;
@@ -166,7 +166,8 @@ export async function fetchTransactionDetails(
     }
 
     onProgress?.(Math.min(i + BATCH_SIZE, txRefs.length), txRefs.length);
-    await sleep(RATE_LIMIT_DELAY_MS * 2);
+    // Conservative delay between batches to avoid rate limits after potential retries
+    await sleep(RATE_LIMIT_DELAY_MS * 5);
   }
 
   return { transactions, failedCount };
@@ -246,16 +247,24 @@ function calculateNetAmount(
   return received - sent;
 }
 
-// Unix timestamp (seconds) when the Cardano Shelley era began (July 29, 2020)
+// Cardano Shelley era parameters for epoch-to-timestamp conversion.
+// Source: Cardano mainnet protocol parameters.
+// Shelley era started July 29, 2020 at 21:44:51 UTC (epoch 208).
+// Note: These values are fixed for mainnet but could differ on testnets.
 const SHELLEY_START_TIMESTAMP = 1596059091;
-// Duration of a Cardano epoch in seconds (5 days)
-const EPOCH_LENGTH_SECONDS = 432000;
-// Epoch number when the Shelley era started
+const EPOCH_LENGTH_SECONDS = 432000; // 5 days in seconds
 const SHELLEY_START_EPOCH = 208;
 
+/**
+ * Converts a Cardano epoch number to an approximate Unix timestamp.
+ * Returns the end of the epoch as an approximation of when rewards are distributed.
+ * Note: Actual reward distribution occurs ~2 days after epoch end, so timestamps
+ * may be off by up to ~2 days from when users actually received rewards.
+ */
 function epochToTimestamp(epoch: number): number {
   return (
-    SHELLEY_START_TIMESTAMP + (epoch - SHELLEY_START_EPOCH) * EPOCH_LENGTH_SECONDS
+    SHELLEY_START_TIMESTAMP +
+    (epoch - SHELLEY_START_EPOCH + 1) * EPOCH_LENGTH_SECONDS
   );
 }
 
@@ -281,7 +290,7 @@ export async function fetchStakingRewards(
       poolId: reward.pool_id,
     }));
   } catch (error) {
-    if (error instanceof Error && error.message === 'NOT_FOUND') {
+    if (error instanceof Error && error.message === 'Resource not found') {
       return [];
     }
     throw error;

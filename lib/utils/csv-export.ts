@@ -13,28 +13,47 @@ const CSV_HEADERS = [
   'Notes',
 ];
 
-const LOVELACE_DIVISOR = 1_000_000;
+const LOVELACE_DIVISOR = BigInt(1_000_000);
+// Number of decimal places for ADA amounts
+const ADA_DECIMAL_PLACES = 6;
 // Number of characters to show from pool ID in notes
 const POOL_ID_PREFIX_LENGTH = 10;
 
+/**
+ * Formats a lovelace amount as ADA with 6 decimal places.
+ * Uses BigInt arithmetic to avoid precision loss for large amounts.
+ */
 function formatAmount(lovelace: string, asset: string): string {
   if (asset === 'lovelace') {
-    const ada = Number(lovelace) / LOVELACE_DIVISOR;
-    return ada.toFixed(6);
+    const lovelaceBigInt = BigInt(lovelace);
+    const isNegative = lovelaceBigInt < BigInt(0);
+    const absLovelace = isNegative ? -lovelaceBigInt : lovelaceBigInt;
+    const intPart = absLovelace / LOVELACE_DIVISOR;
+    const fracPart = absLovelace % LOVELACE_DIVISOR;
+    const fracStr = fracPart.toString().padStart(ADA_DECIMAL_PLACES, '0');
+    const sign = isNegative ? '-' : '';
+    return `${sign}${intPart}.${fracStr}`;
   }
   return lovelace;
 }
 
+/**
+ * Escapes a CSV field to prevent injection and handle special characters.
+ * Numeric values (including negative numbers) are not escaped to preserve
+ * proper spreadsheet import behavior.
+ */
 function escapeCSVField(field: string): string {
   let escaped = field;
   // First, wrap in quotes if contains special characters, and escape double quotes
   if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
     escaped = `"${escaped.replace(/"/g, '""')}"`;
   }
-  // Then prevent CSV injection by prepending single quote for formula characters
-  // This must happen AFTER quote wrapping to be effective
-  if (/^[=+\-@\t|]/.test(field)) {
-    escaped = "'" + escaped;
+  // Prevent CSV injection by prepending single quote for formula characters.
+  // Skip numeric values (including negative numbers like -50.000000) to preserve
+  // proper import into spreadsheets. Numeric pattern: optional minus, digits, optional decimal.
+  const isNumeric = /^-?\d+(\.\d+)?$/.test(field);
+  if (!isNumeric && /^[=+\-@\t|]/.test(field)) {
+    escaped = "' " + escaped;
   }
   return escaped;
 }
@@ -93,6 +112,7 @@ function filterTransactions(
     filtered = filtered.filter((tx) => tx.asset === 'lovelace');
   }
 
+  // Sort by timestamp descending (newest first) for easier review of recent activity
   filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
   return filtered;
