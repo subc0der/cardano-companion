@@ -27,14 +27,14 @@ function formatAmount(lovelace: string, asset: string): string {
 
 function escapeCSVField(field: string): string {
   let escaped = field;
-  // Prevent CSV injection by prepending single quote for formula characters
-  // Includes tab and pipe which can trigger formulas in some spreadsheets
-  if (/^[=+\-@\t|]/.test(escaped)) {
-    escaped = "'" + escaped;
-  }
-  // Wrap in quotes if contains special characters, and escape double quotes
+  // First, wrap in quotes if contains special characters, and escape double quotes
   if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
     escaped = `"${escaped.replace(/"/g, '""')}"`;
+  }
+  // Then prevent CSV injection by prepending single quote for formula characters
+  // This must happen AFTER quote wrapping to be effective
+  if (/^[=+\-@\t|]/.test(field)) {
+    escaped = "'" + escaped;
   }
   return escaped;
 }

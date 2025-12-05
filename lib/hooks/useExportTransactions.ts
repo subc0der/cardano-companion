@@ -62,24 +62,31 @@ export function useExportTransactions() {
           }
         }
 
-        // Phase 2: Fetch transaction hashes from all addresses
+        // Phase 2: Fetch transaction hashes from all addresses in parallel
         const allTxRefs: Awaited<ReturnType<typeof fetchTransactionHashes>> = [];
         const seenHashes = new Set<string>();
-        let totalFetched = 0;
 
-        for (const address of allAddresses) {
-          const txRefs = await fetchTransactionHashes(address, (count) => {
-            // Accumulate count across all addresses for smooth progress
-            setProgress({ phase: 'fetching', current: totalFetched + count, total: 0 });
-          });
+        const allTxRefsByAddress = await Promise.all(
+          allAddresses.map((address) =>
+            fetchTransactionHashes(address, (count) => {
+              // Progress updates may be racy across parallel fetches, but acceptable
+              setProgress((prev) => ({
+                phase: 'fetching',
+                current: prev.current + count,
+                total: 0,
+              }));
+            })
+          )
+        );
 
+        // Deduplicate and flatten results
+        for (const txRefs of allTxRefsByAddress) {
           for (const txRef of txRefs) {
             if (!seenHashes.has(txRef.tx_hash)) {
               seenHashes.add(txRef.tx_hash);
               allTxRefs.push(txRef);
             }
           }
-          totalFetched += txRefs.length;
         }
 
         if (allTxRefs.length === 0 && !options.includeStakingRewards) {

@@ -30,7 +30,7 @@ export interface Transaction {
   poolId?: string;
 }
 
-export type AssetFilter = 'all' | 'ada_only' | 'tokens';
+export type AssetFilter = 'all' | 'ada_only';
 
 export interface ExportOptions {
   startDate?: Date;

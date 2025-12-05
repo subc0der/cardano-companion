@@ -163,7 +163,7 @@ export function ExportTool() {
               </View>
             )}
 
-            {error && (
+            {error && !isLoading && (
               <View style={styles.resultContainer}>
                 <Text style={styles.errorText}>{error}</Text>
                 <View style={styles.actions}>

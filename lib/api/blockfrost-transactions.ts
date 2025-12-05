@@ -236,8 +236,11 @@ function calculateNetAmount(
   return received - sent;
 }
 
+// Unix timestamp (seconds) when the Cardano Shelley era began (July 29, 2020)
 const SHELLEY_START_TIMESTAMP = 1596059091;
+// Duration of a Cardano epoch in seconds (5 days)
 const EPOCH_LENGTH_SECONDS = 432000;
+// Epoch number when the Shelley era started
 const SHELLEY_START_EPOCH = 208;
 
 function epochToTimestamp(epoch: number): number {
