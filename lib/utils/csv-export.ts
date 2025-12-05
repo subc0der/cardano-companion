@@ -44,17 +44,20 @@ function formatAmount(lovelace: string, asset: string): string {
  */
 function escapeCSVField(field: string): string {
   let escaped = field;
-  // First, wrap in quotes if contains special characters, and escape double quotes
-  if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
-    escaped = `"${escaped.replace(/"/g, '""')}"`;
-  }
-  // Prevent CSV injection by prepending single quote for formula characters.
+
+  // Prevent CSV injection FIRST, before any other transformations.
   // Skip numeric values (including negative numbers like -50.000000) to preserve
   // proper import into spreadsheets. Numeric pattern: optional minus, digits, optional decimal.
   const isNumeric = /^-?\d+(\.\d+)?$/.test(field);
   if (!isNumeric && /^[=+\-@\t|]/.test(field)) {
     escaped = "' " + escaped;
   }
+
+  // Then wrap in quotes if contains special characters, and escape double quotes
+  if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
+    escaped = `"${escaped.replace(/"/g, '""')}"`;
+  }
+
   return escaped;
 }
 
