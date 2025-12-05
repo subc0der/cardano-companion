@@ -93,6 +93,7 @@ export function ExportTool() {
                   <Switch
                     value={includeRewards}
                     onValueChange={setIncludeRewards}
+                    accessibilityLabel="Include staking rewards in export"
                     trackColor={{
                       false: cyberpunk.bgTertiary,
                       true: cyberpunk.neonMagenta,

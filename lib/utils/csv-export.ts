@@ -110,7 +110,9 @@ export async function exportTransactionsToCSV(
         success: false,
         filename: '',
         transactionCount: 0,
-        error: 'No transactions to export',
+        error: transactions.length > 0
+          ? 'No transactions match the selected filters'
+          : 'No transactions to export',
       };
     }
 

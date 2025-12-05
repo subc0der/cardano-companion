@@ -69,7 +69,9 @@ export function useExportTransactions() {
         const allTxRefsByAddress = await Promise.all(
           allAddresses.map((address) =>
             fetchTransactionHashes(address, (count) => {
-              // Progress updates may be racy across parallel fetches, but acceptable
+              // Progress updates may be racy across parallel fetches (multiple addresses
+              // updating simultaneously). This only affects the display counter and doesn't
+              // impact correctness - all tx hashes are deduplicated after fetches complete.
               setProgress((prev) => ({
                 phase: 'fetching',
                 current: prev.current + count,
@@ -93,6 +95,7 @@ export function useExportTransactions() {
           setError('No transactions found for this wallet');
           return;
         }
+        // If including staking rewards, continue even with no txs - we may still have rewards
 
         // Phase 3: Fetch transaction details
         setProgress({

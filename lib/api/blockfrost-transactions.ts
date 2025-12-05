@@ -64,10 +64,10 @@ function sleep(ms: number): Promise<void> {
 }
 
 async function fetchBlockfrost<T>(
-  endpoint: string,
+  path: string,
   retryCount = 0
 ): Promise<T> {
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+  const response = await fetch(`${BASE_URL}${path}`, {
     headers: { project_id: API_KEY },
   });
 
@@ -79,7 +79,7 @@ async function fetchBlockfrost<T>(
       if (retryCount < MAX_RETRIES) {
         // Exponential backoff: 100ms, 200ms, 400ms
         await sleep(RATE_LIMIT_DELAY_MS * Math.pow(2, retryCount));
-        return fetchBlockfrost<T>(endpoint, retryCount + 1);
+        return fetchBlockfrost<T>(path, retryCount + 1);
       }
       throw new Error('RATE_LIMITED');
     }

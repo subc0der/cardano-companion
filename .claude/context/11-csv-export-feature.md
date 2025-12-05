@@ -34,7 +34,7 @@ Export Cardano transaction history to CSV for record-keeping, tax preparation, o
 | Date | Transaction timestamp | ISO 8601 |
 | Type | Classification | send/receive/stake_reward |
 | Asset | Asset identifier | ADA or ticker |
-| Amount | Net change | Signed decimal (negative = sent) |
+| Amount | Net change | Decimal (see Type for direction) |
 | Fee | Transaction fee | Decimal or empty |
 | Transaction Hash | On-chain tx ID | 64 char hex |
 | Block | Block height | Integer |
@@ -66,7 +66,7 @@ Date,Type,Asset,Amount,Fee,Transaction Hash,Block,Notes
 
 ## UI Location
 
-Export button on Portfolio screen (next to DISCONNECT button in header).
+Export tool card on Tools screen, accessible via the Tools tab navigation.
 
 ## Dependencies
 
