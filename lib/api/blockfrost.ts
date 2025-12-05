@@ -124,9 +124,11 @@ export interface AccountAddress {
 }
 
 const MAX_PAGINATION_PAGES = 100;
+// Blockfrost returns this many addresses per page
+const ADDRESSES_PER_PAGE = 100;
 
 export async function getAccountAddresses(stakeAddress: string): Promise<AccountAddress[]> {
-  // Paginate through all addresses (Blockfrost returns max 100 per page)
+  // Paginate through all addresses
   const allAddresses: AccountAddress[] = [];
   let page = 1;
 
@@ -138,7 +140,7 @@ export async function getAccountAddresses(stakeAddress: string): Promise<Account
     if (addresses.length === 0) break;
     allAddresses.push(...addresses);
 
-    if (addresses.length < 100) break;
+    if (addresses.length < ADDRESSES_PER_PAGE) break;
     page++;
   }
 
