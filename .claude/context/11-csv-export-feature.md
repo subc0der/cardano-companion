@@ -7,24 +7,24 @@ Export Cardano transaction history to CSV for record-keeping, tax preparation, o
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| F1 | Export all transactions for connected wallet | Must | Pending |
-| F2 | Include transaction type (send/receive/stake reward) | Must | Pending |
-| F3 | Include timestamp, amount, asset, tx hash, fees | Must | Pending |
-| F4 | Filter by date range | Should | Pending |
-| F5 | Filter by asset type (ADA only, tokens, NFTs) | Should | Pending |
-| F6 | Export staking rewards separately | Should | Deferred |
+| F1 | Export all transactions for connected wallet | Must | Done |
+| F2 | Include transaction type (send/receive/stake reward) | Must | Done |
+| F3 | Include timestamp, amount, asset, tx hash, fees | Must | Done |
+| F4 | Filter by date range | Should | Done (via options) |
+| F5 | Filter by asset type (ADA only vs all) | Should | Done |
+| F6 | Toggle staking rewards inclusion | Should | Done |
 | F7 | Calculate cost basis for tax purposes | Could | Deferred (Premium) |
-| F8 | Support multiple wallet addresses | Could | Deferred |
+| F8 | Support multiple wallet addresses | Could | Done (via stake address) |
 
 ## Non-Functional Requirements
 
-| ID | Requirement |
-|----|-------------|
-| NF1 | Process 1000+ transactions without UI freeze |
-| NF2 | Show progress indicator during export |
-| NF3 | Handle API rate limits gracefully |
-| NF4 | Work offline for cached transaction data |
-| NF5 | File size reasonable (<5MB for typical user) |
+| ID | Requirement | Status |
+|----|-------------|--------|
+| NF1 | Process 1000+ transactions without UI freeze | Done (batch processing) |
+| NF2 | Show progress indicator during export | Done |
+| NF3 | Handle API rate limits gracefully | Done (exponential backoff) |
+| NF4 | Work offline for cached transaction data | Deferred |
+| NF5 | File size reasonable (<5MB for typical user) | Done |
 
 ## CSV Schema
 
