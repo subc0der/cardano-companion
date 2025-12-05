@@ -66,17 +66,24 @@ export function useExportTransactions() {
         const allTxRefs: Awaited<ReturnType<typeof fetchTransactionHashes>> = [];
         const seenHashes = new Set<string>();
 
+        // Track cumulative progress per address during parallel fetches
+        const addressProgress = new Map<string, number>();
+
         const allTxRefsByAddress = await Promise.all(
           allAddresses.map((address) =>
             fetchTransactionHashes(address, (count) => {
-              // Progress updates may be racy across parallel fetches (multiple addresses
-              // updating simultaneously). This only affects the display counter and doesn't
-              // impact correctness - all tx hashes are deduplicated after fetches complete.
-              setProgress((prev) => ({
+              // Each callback receives cumulative count for its address (e.g., 100, 200, 300).
+              // Store per-address progress and sum across all addresses for the display counter.
+              addressProgress.set(address, count);
+              const totalProgress = Array.from(addressProgress.values()).reduce(
+                (sum, n) => sum + n,
+                0
+              );
+              setProgress({
                 phase: 'fetching',
-                current: prev.current + count,
+                current: totalProgress,
                 total: 0,
-              }));
+              });
             })
           )
         );
