@@ -151,10 +151,20 @@ export async function getAssetInfo(asset: string): Promise<AssetInfo> {
   return fetchBlockfrost<AssetInfo>(`/assets/${asset}`);
 }
 
+export interface AssetAddress {
+  address: string;
+  quantity: string;
+}
+
+export async function getAssetAddresses(asset: string): Promise<AssetAddress[]> {
+  return fetchBlockfrost<AssetAddress[]>(`/assets/${asset}/addresses`);
+}
+
 export const blockfrost = {
   getAccountInfo,
   getAddressUtxos,
   getAddressInfo,
   getAccountAddresses,
   getAssetInfo,
+  getAssetAddresses,
 };

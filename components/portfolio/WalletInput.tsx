@@ -11,6 +11,11 @@ import { typography } from '../../lib/theme/typography';
 import { CyberCard } from '../ui/CyberCard';
 import { CyberButton } from '../ui/CyberButton';
 import { useWalletStore } from '../../lib/stores/wallet';
+import {
+  isHandle,
+  resolveHandle,
+  HandleResolutionError,
+} from '../../lib/cardano/handle-resolver';
 
 interface WalletInputProps {
   onConnected?: () => void;
@@ -26,17 +31,7 @@ export function WalletInput({ onConnected }: WalletInputProps) {
     const trimmed = inputValue.trim();
 
     if (!trimmed) {
-      setError('Please enter a wallet address');
-      return;
-    }
-
-    // Basic Cardano address validation
-    const isValidFormat =
-      (trimmed.startsWith('addr1') && trimmed.length >= 58) ||
-      (trimmed.startsWith('stake1') && trimmed.length >= 54);
-
-    if (!isValidFormat) {
-      setError('Invalid Cardano address format');
+      setError('Please enter a wallet address or $handle');
       return;
     }
 
@@ -44,19 +39,41 @@ export function WalletInput({ onConnected }: WalletInputProps) {
     setError(null);
 
     try {
+      // Check if input is an ADA Handle
+      if (isHandle(trimmed)) {
+        const resolution = await resolveHandle(trimmed);
+        setAddress(resolution.address);
+        setStakeAddress(resolution.stakeAddress);
+        onConnected?.();
+        return;
+      }
+
+      // Basic Cardano address validation
+      const isValidFormat =
+        (trimmed.startsWith('addr1') && trimmed.length >= 58) ||
+        (trimmed.startsWith('stake1') && trimmed.length >= 54);
+
+      if (!isValidFormat) {
+        setError('Invalid Cardano address format');
+        return;
+      }
+
       // Determine if it's a stake address or regular address
       if (trimmed.startsWith('stake1')) {
         setStakeAddress(trimmed);
         setAddress(null);
       } else {
         setAddress(trimmed);
-        // We'll derive stake address from API later if needed
         setStakeAddress(null);
       }
 
       onConnected?.();
-    } catch {
-      setError('Failed to validate address');
+    } catch (err) {
+      if (err instanceof HandleResolutionError) {
+        setError(err.message);
+      } else {
+        setError('Failed to validate address');
+      }
     } finally {
       setIsValidating(false);
     }
@@ -66,7 +83,7 @@ export function WalletInput({ onConnected }: WalletInputProps) {
     <CyberCard glowColor="cyan">
       <Text style={styles.label}>WALLET ADDRESS</Text>
       <Text style={styles.hint}>
-        Enter your Cardano address (addr1...) or stake address (stake1...)
+        Enter address (addr1...), stake address (stake1...), or $handle
       </Text>
 
       <TextInput
@@ -76,7 +93,7 @@ export function WalletInput({ onConnected }: WalletInputProps) {
           setInputValue(text);
           setError(null);
         }}
-        placeholder="addr1q..."
+        placeholder="addr1q... or $handle"
         placeholderTextColor={cyberpunk.textMuted}
         autoCapitalize="none"
         autoCorrect={false}

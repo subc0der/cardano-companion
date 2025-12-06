@@ -100,11 +100,13 @@ function filterTransactions(
   let filtered = [...transactions];
 
   if (options.startDate) {
-    filtered = filtered.filter((tx) => tx.timestamp >= options.startDate!);
+    const startDate = options.startDate;
+    filtered = filtered.filter((tx) => tx.timestamp >= startDate);
   }
 
   if (options.endDate) {
-    filtered = filtered.filter((tx) => tx.timestamp <= options.endDate!);
+    const endDate = options.endDate;
+    filtered = filtered.filter((tx) => tx.timestamp <= endDate);
   }
 
   if (!options.includeStakingRewards) {
