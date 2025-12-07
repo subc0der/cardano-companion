@@ -294,7 +294,8 @@ export const useGameStore = create<GameStore>()(
           lifetimeLost += game.currentBet;
         } else {
           winner = 'tie';
-          // Split pot on tie
+          // Split pot on tie - each player gets their bet back
+          // No lifetime tracking update: ties have zero net gain/loss
           const halfPot = Math.floor(game.pot / 2);
           playerChips += halfPot;
           aiChips += game.pot - halfPot;
