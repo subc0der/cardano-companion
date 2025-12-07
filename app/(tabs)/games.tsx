@@ -25,6 +25,7 @@ import {
 import {
   AI_THINK_DELAY_MS,
   RESULT_DELAY_MS,
+  ROLL_PHASE_TRANSITION_MS,
 } from '../../lib/games/ada-rollz/constants';
 
 export default function GamesScreen() {
@@ -38,6 +39,7 @@ export default function GamesScreen() {
     reroll,
     stand,
     executeAiTurn,
+    transitionToPlayerTurn,
     revealResult,
     startNewRound,
     startFreshGame,
@@ -49,6 +51,16 @@ export default function GamesScreen() {
       initGame();
     }
   }, [game, initGame]);
+
+  // Handle rolling phase transition to player turn
+  useEffect(() => {
+    if (game?.phase === 'rolling') {
+      const timer = setTimeout(() => {
+        transitionToPlayerTurn();
+      }, ROLL_PHASE_TRANSITION_MS);
+      return () => clearTimeout(timer);
+    }
+  }, [game?.phase, transitionToPlayerTurn]);
 
   // Handle AI turn automatically
   useEffect(() => {

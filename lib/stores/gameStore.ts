@@ -24,7 +24,6 @@ import {
   POINTS_PER_CHIP,
   MAX_REROLLS,
   MIN_BET_CHIPS,
-  ROLL_PHASE_TRANSITION_MS,
 } from '../games/ada-rollz/constants';
 import {
   createHand,
@@ -63,6 +62,9 @@ interface GameStore {
 
   // AI turn
   executeAiTurn: () => void;
+
+  // Phase transitions
+  transitionToPlayerTurn: () => void;
 
   // Result phase
   revealResult: () => void;
@@ -153,9 +155,8 @@ export const useGameStore = create<GameStore>()(
       },
 
       // Roll all dice (initial roll)
-      // Note: All game state changes happen in the first set() call.
-      // The setTimeout only transitions the phase for animation purposes.
-      // The phase check ensures no race condition if state changed externally.
+      // Sets phase to 'rolling'. The component handles the timed transition
+      // to 'player_turn' via useEffect with proper cleanup.
       rollDice: () => {
         const { game } = get();
         if (!game || game.phase !== 'betting') return;
@@ -177,15 +178,15 @@ export const useGameStore = create<GameStore>()(
             rerollsRemaining: MAX_REROLLS,
           },
         });
+      },
 
-        // Transition to player turn after brief animation delay
-        setTimeout(() => {
-          const currentGame = get().game;
-          // Only transition if still in rolling phase (guards against external state changes)
-          if (currentGame?.phase === 'rolling') {
-            set({ game: { ...currentGame, phase: 'player_turn' } });
-          }
-        }, ROLL_PHASE_TRANSITION_MS);
+      // Transition from rolling phase to player turn
+      // Called by component after animation delay with proper cleanup
+      transitionToPlayerTurn: () => {
+        const { game } = get();
+        if (!game || game.phase !== 'rolling') return;
+
+        set({ game: { ...game, phase: 'player_turn' } });
       },
 
       // Toggle hold on a specific die
