@@ -75,6 +75,7 @@ export function WalletInput({ onConnected }: WalletInputProps) {
         setError('Failed to validate address');
       }
     } finally {
+      // Always runs, even for early returns inside try block
       setIsValidating(false);
     }
   };

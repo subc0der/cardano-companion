@@ -136,13 +136,13 @@ export async function resolveHandle(handle: string): Promise<HandleResolution> {
 
     // Network or parsing error
     if (error instanceof Error) {
-      // error.message is always a string, but may be empty - provide fallback for empty messages
-      const message = error.message.trim() || 'Failed to resolve handle';
+      // error.message is always a string, but may be empty - provide specific fallback
+      const message = error.message.trim() || 'Network error while resolving handle';
       throw new HandleResolutionError(message, 'API_ERROR');
     }
 
     throw new HandleResolutionError(
-      'Failed to resolve handle. Please try again.',
+      'Unable to connect to Handle.me API. Please try again.',
       'API_ERROR'
     );
   }
