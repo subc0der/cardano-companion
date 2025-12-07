@@ -1,3 +1,4 @@
+export { AlertBanner } from './AlertBanner';
 export { CurrentDelegation } from './CurrentDelegation';
 export { PoolCard } from './PoolCard';
 export { RecommendationList } from './RecommendationList';

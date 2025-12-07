@@ -5,6 +5,8 @@ import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
 import { formatAda } from '../../lib/utils/lovelace';
 import { stakingApi, STAKING_CONFIG, getSaturationColor, getPoolStatus } from '../../lib/staking';
+import { usePoolAlerts } from '../../lib/hooks/usePoolAlerts';
+import { AlertBanner } from './AlertBanner';
 import type { DelegationInfo } from '../../lib/staking';
 
 interface CurrentDelegationProps {
@@ -44,6 +46,9 @@ export function CurrentDelegation({
 
   const isLoading = delegationLoading || poolLoading;
   const error = delegationError || poolError;
+
+  // Hook must be called unconditionally before any early returns
+  const { alerts, hasAny: hasAlerts } = usePoolAlerts(pool);
 
   if (isLoading) {
     return (
@@ -107,7 +112,7 @@ export function CurrentDelegation({
   const saturationColor = getSaturationColor(pool.saturation);
   const saturationWidth = Math.min(pool.saturation, 100);
 
-  const accessibilityLabel = `Your delegation to pool ${pool.ticker}, saturation ${pool.saturation.toFixed(1)}%, ROA ${pool.isHistoryComplete ? pool.last10EpochsROA.toFixed(2) + '%' : 'unavailable'}`;
+  const accessibilityLabel = `Your delegation to pool ${pool.ticker}, saturation ${pool.saturation.toFixed(1)}%, ROA ${pool.isHistoryComplete ? pool.last10EpochsROA.toFixed(2) + '%' : 'unavailable'}${hasAlerts ? `, ${alerts.length} alert${alerts.length > 1 ? 's' : ''}` : ''}`;
 
   return (
     <View
@@ -128,6 +133,12 @@ export function CurrentDelegation({
           <Text style={[styles.statusText, { color: status.color }]}>{status.text}</Text>
         </View>
       </View>
+
+      {hasAlerts && (
+        <View style={styles.alertsContainer}>
+          <AlertBanner alerts={alerts} />
+        </View>
+      )}
 
       <View style={styles.saturationContainer}>
         <View style={styles.saturationHeader}>
@@ -273,6 +284,9 @@ const styles = StyleSheet.create({
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
     letterSpacing: 1,
+  },
+  alertsContainer: {
+    marginBottom: 16,
   },
   saturationContainer: {
     marginBottom: 16,
