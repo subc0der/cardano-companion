@@ -62,25 +62,6 @@ export const STAKING_CONFIG = {
   POOLS_PER_PAGE: 100,
 } as const;
 
-export const ALERT_THRESHOLDS = {
-  /** Saturation percentage that triggers warning - references STAKING_CONFIG */
-  get SATURATION_WARNING() {
-    return STAKING_CONFIG.SATURATION_WARNING_PERCENT;
-  },
-  /** Saturation percentage that triggers critical alert - references STAKING_CONFIG */
-  get SATURATION_CRITICAL() {
-    return STAKING_CONFIG.SATURATION_CRITICAL_PERCENT;
-  },
-  /** Epochs without blocks before warning - references STAKING_CONFIG */
-  get EPOCHS_WITHOUT_BLOCKS_WARNING() {
-    return STAKING_CONFIG.EPOCHS_WITHOUT_BLOCKS_WARNING;
-  },
-  /** Margin increase threshold for warning - references STAKING_CONFIG */
-  get MARGIN_INCREASE_WARNING() {
-    return STAKING_CONFIG.MARGIN_INCREASE_WARNING;
-  },
-} as const;
-
 import type { RecommendationReason, PoolAlertType } from './types';
 
 /**
