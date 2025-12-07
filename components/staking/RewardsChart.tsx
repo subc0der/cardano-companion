@@ -47,6 +47,8 @@ export function RewardsChart({ stakeAddress }: RewardsChartProps) {
       max: maxLovelace(amounts),
     };
 
+    // Distribute available width evenly, accounting for gaps between bars
+    // Falls back to MIN_BAR_WIDTH if calculated width is too small for visibility
     const availableWidth = CHART_WIDTH - Y_AXIS_WIDTH;
     const calculatedBarWidth = Math.max(
       (availableWidth - BAR_GAP * (data.length - 1)) / data.length,
@@ -105,6 +107,7 @@ export function RewardsChart({ stakeAddress }: RewardsChartProps) {
           height={CHART_HEIGHT + LABEL_HEIGHT}
           accessibilityLabel={`Rewards history chart showing ${chartData.length} epochs. Total rewards: ${formatAdaShort(stats.total)} ADA`}
           accessible={true}
+          accessibilityRole="image"
         >
           {/* Y-axis labels */}
           <SvgText

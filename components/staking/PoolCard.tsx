@@ -18,8 +18,14 @@ function PoolCardComponent({ recommendation }: PoolCardProps) {
       ? `+${improvementVsCurrent.toFixed(2)}%`
       : improvementVsCurrent.toFixed(2) + '%';
 
+  const accessibilityLabel = `Pool ${pool.ticker}, ${pool.name}. ROA ${projectedAnnualYield.toFixed(2)}%, Saturation ${pool.saturation.toFixed(0)}%, Margin ${(pool.margin * 100).toFixed(1)}%, ${pool.lifetimeBlocks.toLocaleString()} blocks. ${getReasonLabel(reason)}, ${improvementText} vs current`;
+
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      accessible={true}
+      accessibilityLabel={accessibilityLabel}
+    >
       <View style={styles.header}>
         <View style={styles.poolIdentity}>
           <Text style={styles.ticker}>[{pool.ticker}]</Text>

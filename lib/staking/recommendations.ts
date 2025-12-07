@@ -91,7 +91,12 @@ export async function getPoolRecommendations(
       return true;
     })
     // Sort by blocks minted as proxy for reliability (more blocks = more established)
-    .sort((a, b) => b.blocks_minted - a.blocks_minted);
+    // Use comparison instead of subtraction to avoid integer overflow edge cases
+    .sort((a, b) => {
+      if (b.blocks_minted > a.blocks_minted) return 1;
+      if (b.blocks_minted < a.blocks_minted) return -1;
+      return 0;
+    });
 
   // Only fetch full details for top N candidates to minimize API calls
   const topCandidates = candidates.slice(0, STAKING_CONFIG.TOP_CANDIDATES_TO_FETCH);

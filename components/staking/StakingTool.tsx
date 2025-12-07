@@ -39,6 +39,7 @@ export function StakingTool() {
         accessibilityRole="button"
         accessibilityLabel="View staking information"
         accessibilityHint="Opens a modal showing your current delegation and staking rewards"
+        accessibilityState={{ disabled: !hasWallet }}
       >
         <Text style={styles.toolIcon}>%</Text>
         <View style={styles.toolInfo}>

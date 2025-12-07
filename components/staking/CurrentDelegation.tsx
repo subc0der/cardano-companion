@@ -107,8 +107,14 @@ export function CurrentDelegation({
   const saturationColor = getSaturationColor(pool.saturation);
   const saturationWidth = Math.min(pool.saturation, 100);
 
+  const accessibilityLabel = `Your delegation to pool ${pool.ticker}, saturation ${pool.saturation.toFixed(1)}%, lifetime ROA ${pool.isHistoryComplete ? pool.lifetimeROA.toFixed(2) + '%' : 'unavailable'}`;
+
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      accessible={true}
+      accessibilityLabel={accessibilityLabel}
+    >
       <Text style={styles.sectionTitle}>YOUR DELEGATION</Text>
 
       <View style={styles.poolHeader}>

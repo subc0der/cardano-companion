@@ -41,10 +41,10 @@ export async function getUserDelegation(stakeAddress: string): Promise<Delegatio
 
 /**
  * Calculate ROA from pool history data using BigInt for precision.
- * ROA = (avg rewards per epoch / avg stake per epoch) * epochs per year * 100
+ * ROA = (avgRewardsPerEpoch * EPOCHS_PER_YEAR * 100) / avgStake
  *
+ * Multiply before dividing to maintain BigInt precision.
  * Uses average values to correctly compute annualized returns.
- * BigInt multiplication before division maintains precision.
  */
 function calculateROAFromHistory(history: BlockfrostPoolHistoryItem[]): number {
   if (history.length === 0) return 0;
@@ -128,7 +128,7 @@ export async function getPoolDetails(poolId: string): Promise<PoolInfo> {
     lifetimeROA,
     recentROA,
     retiring: pool.retirement.length > 0,
-    retireEpoch: pool.retirement.length > 0 ? parseInt(pool.retirement[0], 10) : null,
+    retireEpoch: pool.retirement.length > 0 ? (parseInt(pool.retirement[0], 10) || null) : null,
     isHistoryComplete,
   };
 }
