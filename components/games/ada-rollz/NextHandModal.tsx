@@ -16,8 +16,10 @@ interface NextHandModalProps {
   visible: boolean;
   /** Who won the round */
   winner: 'player' | 'ai' | 'tie';
-  /** Chips won (for player wins) */
+  /** Total pot won (for player wins) */
   potWon: number;
+  /** Player's bet amount (chips wagered by player) */
+  playerBet: number;
   /** Player's hand */
   playerHand: EvaluatedHand;
   /** AI's hand */
@@ -34,6 +36,7 @@ export function NextHandModal({
   visible,
   winner,
   potWon,
+  playerBet,
   playerHand,
   aiHand,
   canContinue,
@@ -73,7 +76,7 @@ export function NextHandModal({
           {/* Chips won/lost */}
           {isWin && <Text style={styles.chipsWon}>+{potWon} chips</Text>}
           {!isWin && !isTie && (
-            <Text style={styles.chipsLost}>-{Math.floor(potWon / 2)} chips</Text>
+            <Text style={styles.chipsLost}>-{playerBet} chips</Text>
           )}
 
           {/* Hand comparison */}

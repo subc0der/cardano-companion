@@ -1,3 +1,5 @@
+// Blockfrost API endpoint for Cardano mainnet
+// Documentation: https://docs.blockfrost.io/
 const BASE_URL = 'https://cardano-mainnet.blockfrost.io/api/v0';
 const API_KEY = process.env.EXPO_PUBLIC_BLOCKFROST_KEY || '';
 

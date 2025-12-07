@@ -7,6 +7,9 @@
 
 import type { HandRank, DieValue } from './types';
 
+// Re-export shared dice constant for convenience
+export { DICE_COUNT } from '../shared/dice';
+
 // =============================================================================
 // GAME CONFIGURATION
 // =============================================================================
@@ -25,9 +28,6 @@ export const MIN_BET_CHIPS = 1;
 
 /** Maximum rerolls allowed per round */
 export const MAX_REROLLS = 2;
-
-/** Number of dice per player */
-export const DICE_COUNT = 5;
 
 // =============================================================================
 // TIMING (in milliseconds)

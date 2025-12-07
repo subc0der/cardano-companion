@@ -6,7 +6,13 @@
  */
 
 import type { Die, DieValue } from '../ada-rollz/types';
-import { DICE_COUNT } from '../ada-rollz/constants';
+
+// =============================================================================
+// SHARED DICE CONSTANTS
+// =============================================================================
+
+/** Number of dice per player (shared across dice games) */
+export const DICE_COUNT = 5;
 
 /** Minimum die face value */
 const MIN_DIE_VALUE = 1;

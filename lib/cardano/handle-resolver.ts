@@ -5,7 +5,8 @@
  * Uses the official Handle.me API for resolution.
  */
 
-// Handle.me API endpoint
+// Official Handle.me API endpoint
+// Documentation: https://docs.handle.me/
 const HANDLE_API_BASE = 'https://api.handle.me';
 
 // Valid handle characters: a-z, 0-9, underscore, hyphen, period

@@ -167,6 +167,7 @@ export default function GamesScreen() {
           visible={showResultModal}
           winner={game.winner}
           potWon={game.pot}
+          playerBet={game.currentBet}
           playerHand={game.playerHand}
           aiHand={game.aiHand}
           canContinue={canPlay}
