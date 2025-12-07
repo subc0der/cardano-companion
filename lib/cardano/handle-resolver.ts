@@ -136,10 +136,9 @@ export async function resolveHandle(handle: string): Promise<HandleResolution> {
 
     // Network or parsing error
     if (error instanceof Error) {
-      throw new HandleResolutionError(
-        error.message || 'Failed to resolve handle',
-        'API_ERROR'
-      );
+      // error.message is always a string, but may be empty - provide fallback for empty messages
+      const message = error.message.trim() || 'Failed to resolve handle';
+      throw new HandleResolutionError(message, 'API_ERROR');
     }
 
     throw new HandleResolutionError(
