@@ -27,11 +27,12 @@ function getSeverityColor(severity: AlertSeverity): string {
 
 /** Get background color with transparency for alert container */
 function getSeverityBackgroundColor(severity: AlertSeverity): string {
+  // RGBA values match theme colors: error=#FF3366, warning=#FFB800, neonCyan=#00FFFF
   switch (severity) {
     case 'critical':
-      return 'rgba(255, 55, 95, 0.15)';
+      return 'rgba(255, 51, 102, 0.15)';
     case 'warning':
-      return 'rgba(255, 176, 0, 0.15)';
+      return 'rgba(255, 184, 0, 0.15)';
     case 'info':
       return 'rgba(0, 255, 255, 0.1)';
   }

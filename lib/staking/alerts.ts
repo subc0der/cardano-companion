@@ -76,17 +76,3 @@ export function getMostSevereAlert(alerts: PoolAlert[]): PoolAlert | null {
   // Already sorted by severity, so first is most severe
   return alerts[0];
 }
-
-/**
- * Get alert icon based on severity.
- */
-export function getAlertIcon(severity: AlertSeverity): string {
-  switch (severity) {
-    case 'critical':
-      return '!';
-    case 'warning':
-      return '!';
-    case 'info':
-      return 'i';
-  }
-}

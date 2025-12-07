@@ -12,7 +12,6 @@ import { CyberCard } from '../../components/ui/CyberCard';
 import { usePrivacyStore } from '../../lib/stores/privacy';
 import {
   useSettingsStore,
-  REFRESH_INTERVALS,
   type RefreshIntervalKey,
   type CurrencyDisplay,
 } from '../../lib/stores/settings';
@@ -107,8 +106,15 @@ function SectionTitle({ children }: { children: string }) {
 
 /** Link row for About section */
 function LinkRow({ label, url }: { label: string; url: string }) {
-  const handlePress = () => {
-    Linking.openURL(url);
+  const handlePress = async () => {
+    try {
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+      }
+    } catch {
+      // Silently fail - URL opening is best-effort
+    }
   };
 
   return (
@@ -235,9 +241,9 @@ export default function SettingsScreen() {
           <View style={styles.divider} />
           <LinkRow label="Cardano Documentation" url="https://docs.cardano.org" />
           <View style={styles.divider} />
-          <LinkRow label="Privacy Policy" url="https://cardano.org/privacy" />
+          <LinkRow label="Privacy Policy" url="https://cardanofoundation.org/privacy" />
           <View style={styles.divider} />
-          <LinkRow label="Terms of Service" url="https://cardano.org/terms" />
+          <LinkRow label="Terms of Service" url="https://cardanofoundation.org/terms" />
         </CyberCard>
 
         {/* Reset Button */}
