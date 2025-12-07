@@ -285,10 +285,12 @@ export const useGameStore = create<GameStore>()(
         if (comparison === 1) {
           winner = 'player';
           playerChips += game.pot;
-          lifetimeEarned += game.pot;
+          // Track net gain: opponent's bet (not full pot which includes our own bet back)
+          lifetimeEarned += game.currentBet;
         } else if (comparison === -1) {
           winner = 'ai';
           aiChips += game.pot;
+          // Track net loss: our bet
           lifetimeLost += game.currentBet;
         } else {
           winner = 'tie';
