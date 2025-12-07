@@ -37,11 +37,11 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="flip"
+          name="games"
           options={{
-            title: 'Flip',
+            title: 'Games',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="ellipse-outline" size={size} color={color} />
+              <Ionicons name="dice-outline" size={size} color={color} />
             ),
           }}
         />

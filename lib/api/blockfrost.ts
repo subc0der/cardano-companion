@@ -1,3 +1,5 @@
+// Blockfrost API endpoint for Cardano mainnet
+// Documentation: https://docs.blockfrost.io/
 const BASE_URL = 'https://cardano-mainnet.blockfrost.io/api/v0';
 const API_KEY = process.env.EXPO_PUBLIC_BLOCKFROST_KEY || '';
 
@@ -151,10 +153,20 @@ export async function getAssetInfo(asset: string): Promise<AssetInfo> {
   return fetchBlockfrost<AssetInfo>(`/assets/${asset}`);
 }
 
+export interface AssetAddress {
+  address: string;
+  quantity: string;
+}
+
+export async function getAssetAddresses(asset: string): Promise<AssetAddress[]> {
+  return fetchBlockfrost<AssetAddress[]>(`/assets/${asset}/addresses`);
+}
+
 export const blockfrost = {
   getAccountInfo,
   getAddressUtxos,
   getAddressInfo,
   getAccountAddresses,
   getAssetInfo,
+  getAssetAddresses,
 };
