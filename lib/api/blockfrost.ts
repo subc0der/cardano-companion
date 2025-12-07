@@ -28,7 +28,7 @@ function setCache<T>(key: string, data: T): void {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-async function fetchBlockfrost<T>(endpoint: string): Promise<T> {
+export async function fetchBlockfrost<T>(endpoint: string): Promise<T> {
   const cacheKey = endpoint;
   const cached = getCached<T>(cacheKey);
   if (cached) return cached;

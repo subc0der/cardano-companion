@@ -1,7 +1,8 @@
-import { Text, StyleSheet, ScrollView } from 'react-native';
+import { Text, StyleSheet, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
+import { StakingTool } from '../../components/staking';
 import { ExportTool } from '../../components/tools/ExportTool';
 
 export default function ToolsScreen() {
@@ -9,7 +10,10 @@ export default function ToolsScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>TOOLS</Text>
-        <ExportTool />
+        <View style={styles.toolsList}>
+          <StakingTool />
+          <ExportTool />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -32,5 +36,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
     letterSpacing: 4,
     marginBottom: 24,
+  },
+  toolsList: {
+    gap: 16,
   },
 });
