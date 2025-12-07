@@ -56,7 +56,7 @@ export const ROLL_PHASE_TRANSITION_MS = 100;
  * Probability that AI makes a suboptimal decision.
  * Range: 0.0 (never) to 1.0 (always), where 0.05 = 5% chance.
  * Makes the game more fair and less frustrating.
- * At 5%, AI occasionally keeps one less die than optimal.
+ * At 5%, AI occasionally releases one held die (only when holding 2+ dice).
  * Value tuned to provide challenging but beatable gameplay.
  */
 export const AI_MISTAKE_RATE = 0.05;

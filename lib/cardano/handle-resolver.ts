@@ -111,23 +111,23 @@ export async function resolveHandle(handle: string): Promise<HandleResolution> {
 
     const data: HandleApiResponse = await response.json();
 
-    // Get the resolved Cardano address
-    // First check resolved_addresses.ada, then fall back to holder (stake address)
+    // Get the resolved payment address (addr1...)
+    // Stake addresses (stake1...) cannot receive payments, so we require a payment address
     const address = data.resolved_addresses?.ada ?? null;
     const stakeAddress = data.holder;
 
-    if (!address && !stakeAddress) {
+    if (!address || !address.startsWith('addr1')) {
       throw new HandleResolutionError(
-        `Handle $${cleanHandle} has no associated address`,
+        `Handle $${cleanHandle} has no payment address. Only handles with payment addresses (addr1...) are supported.`,
         'NOT_FOUND'
       );
     }
 
     return {
       handle: cleanHandle,
-      address: address ?? stakeAddress,
+      address,
       // The 'holder' field should be a stake address, but validate to be safe
-      stakeAddress: stakeAddress.startsWith('stake1') ? stakeAddress : null,
+      stakeAddress: stakeAddress?.startsWith('stake1') ? stakeAddress : null,
     };
   } catch (error) {
     if (error instanceof HandleResolutionError) {
