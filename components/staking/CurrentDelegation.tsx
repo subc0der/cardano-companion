@@ -107,7 +107,7 @@ export function CurrentDelegation({
   const saturationColor = getSaturationColor(pool.saturation);
   const saturationWidth = Math.min(pool.saturation, 100);
 
-  const accessibilityLabel = `Your delegation to pool ${pool.ticker}, saturation ${pool.saturation.toFixed(1)}%, lifetime ROA ${pool.isHistoryComplete ? pool.lifetimeROA.toFixed(2) + '%' : 'unavailable'}`;
+  const accessibilityLabel = `Your delegation to pool ${pool.ticker}, saturation ${pool.saturation.toFixed(1)}%, ROA ${pool.isHistoryComplete ? pool.last10EpochsROA.toFixed(2) + '%' : 'unavailable'}`;
 
   return (
     <View
@@ -156,9 +156,9 @@ export function CurrentDelegation({
           <Text style={styles.statValue}>{formatAda(delegation.rewards)} ADA</Text>
         </View>
         <View style={styles.stat}>
-          <Text style={styles.statLabel}>Lifetime ROA</Text>
+          <Text style={styles.statLabel}>ROA (10 epochs)</Text>
           <Text style={styles.statValue}>
-            {pool.isHistoryComplete ? `${pool.lifetimeROA.toFixed(2)}%` : 'N/A'}
+            {pool.isHistoryComplete ? `${pool.last10EpochsROA.toFixed(2)}%` : 'N/A'}
           </Text>
         </View>
         <View style={styles.stat}>

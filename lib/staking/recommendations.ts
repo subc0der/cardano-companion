@@ -45,7 +45,7 @@ function determineReason(
 ): RecommendationReason {
   if (!current) return 'better_overall';
 
-  const roaDiff = candidate.recentROA - current.recentROA;
+  const roaDiff = candidate.last5EpochsROA - current.last5EpochsROA;
   const satDiff = current.saturation - candidate.saturation;
   const marginDiff = current.margin - candidate.margin;
 
@@ -117,8 +117,8 @@ export async function getPoolRecommendations(
 
     const pool = result.value;
     const improvementVsCurrent = currentPool
-      ? pool.recentROA - currentPool.recentROA
-      : pool.recentROA;
+      ? pool.last5EpochsROA - currentPool.last5EpochsROA
+      : pool.last5EpochsROA;
 
     // Only recommend if there's meaningful improvement (or no current pool)
     if (currentPool && improvementVsCurrent < STAKING_CONFIG.MIN_ROA_IMPROVEMENT_PERCENT) {
@@ -128,7 +128,7 @@ export async function getPoolRecommendations(
     recommendations.push({
       pool,
       reason: determineReason(pool, currentPool),
-      projectedAnnualYield: pool.recentROA,
+      projectedAnnualYield: pool.last5EpochsROA,
       improvementVsCurrent,
     });
   }

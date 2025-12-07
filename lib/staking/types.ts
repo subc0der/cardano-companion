@@ -24,10 +24,10 @@ export interface PoolInfo {
   liveStake: string;
   /** Total blocks minted over pool lifetime */
   lifetimeBlocks: number;
-  /** Lifetime return on ADA as percentage */
-  lifetimeROA: number;
-  /** Recent ROA (last 10 epochs) as percentage */
-  recentROA: number;
+  /** ROA based on last 10 epochs as percentage */
+  last10EpochsROA: number;
+  /** ROA based on last 5 epochs as percentage */
+  last5EpochsROA: number;
   /** Whether pool has announced retirement */
   retiring: boolean;
   /** Epoch number when pool will retire, null if not retiring */

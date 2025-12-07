@@ -108,8 +108,8 @@ export async function getPoolDetails(poolId: string): Promise<PoolInfo> {
     console.warn(`Failed to fetch history for pool ${poolId}`);
   }
 
-  const lifetimeROA = calculateROAFromHistory(history);
-  const recentROA = calculateROAFromHistory(
+  const last10EpochsROA = calculateROAFromHistory(history);
+  const last5EpochsROA = calculateROAFromHistory(
     history.slice(0, STAKING_CONFIG.SHORT_TERM_EPOCHS_FOR_ROA)
   );
 
@@ -125,8 +125,8 @@ export async function getPoolDetails(poolId: string): Promise<PoolInfo> {
     pledge: pool.declared_pledge,
     liveStake: pool.live_stake,
     lifetimeBlocks: pool.blocks_minted,
-    lifetimeROA,
-    recentROA,
+    last10EpochsROA,
+    last5EpochsROA,
     retiring: pool.retirement.length > 0,
     retireEpoch: pool.retirement.length > 0 ? (parseInt(pool.retirement[0], 10) || null) : null,
     isHistoryComplete,
