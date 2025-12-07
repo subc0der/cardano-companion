@@ -111,8 +111,8 @@ export interface PointsBalance {
   chips: number;
   /** Total points (chips × POINTS_PER_CHIP) */
   totalPoints: number;
-  /** Lifetime chips earned (net winnings from opponent bets) */
+  /** Lifetime net profit from wins (opponent's bet per win, not full pot) */
   lifetimeEarned: number;
-  /** Lifetime chips lost (net losses from player bets) */
+  /** Lifetime net loss from losses (player's bet per loss) */
   lifetimeLost: number;
 }

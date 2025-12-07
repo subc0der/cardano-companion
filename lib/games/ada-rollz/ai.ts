@@ -105,7 +105,8 @@ function getOptimalHold(dice: Die[], rerollsLeft: number): string[] {
     return dice.filter((d) => pairValues.includes(d.value)).map((d) => d.id);
   }
 
-  // High card: keep the single highest die
+  // High card: keep only the highest die
+  // Strategy: Rerolling 4 dice maximizes chances of forming pairs or better
   const sortedDice = [...dice].sort((a, b) => b.value - a.value);
   return [sortedDice[0].id];
 }

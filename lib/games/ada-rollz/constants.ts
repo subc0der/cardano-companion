@@ -56,6 +56,7 @@ export const ROLL_PHASE_TRANSITION_MS = 100;
  * Probability that AI makes a suboptimal decision (0-1).
  * Makes the game more fair and less frustrating.
  * At 0.05 (5%), AI occasionally keeps one less die than optimal.
+ * Value tuned to provide challenging but beatable gameplay.
  */
 export const AI_MISTAKE_RATE = 0.05;
 
