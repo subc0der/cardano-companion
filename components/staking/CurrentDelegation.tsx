@@ -4,19 +4,25 @@ import { useQuery } from '@tanstack/react-query';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
 import { formatAda } from '../../lib/utils/lovelace';
-import { useUserDelegation } from '../../lib/hooks/useUserDelegation';
 import { stakingApi, STAKING_CONFIG, getSaturationColor, getPoolStatus } from '../../lib/staking';
+import type { DelegationInfo } from '../../lib/staking';
 
 interface CurrentDelegationProps {
   stakeAddress: string;
+  /** Optional delegation data passed from parent to avoid duplicate queries */
+  delegation?: DelegationInfo;
+  /** Loading state when delegation is passed from parent */
+  isLoading?: boolean;
+  /** Error state when delegation is passed from parent */
+  error?: Error | null;
 }
 
-export function CurrentDelegation({ stakeAddress }: CurrentDelegationProps) {
-  const {
-    data: delegation,
-    isLoading: delegationLoading,
-    error: delegationError,
-  } = useUserDelegation(stakeAddress);
+export function CurrentDelegation({
+  stakeAddress,
+  delegation,
+  isLoading: delegationLoading = false,
+  error: delegationError = null,
+}: CurrentDelegationProps) {
 
   // Dependent query: only runs when delegation has a poolId
   // queryKey includes poolId so it refetches when pool changes

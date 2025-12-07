@@ -13,8 +13,12 @@ export function StakingTool() {
   const { stakeAddress } = useWalletStore();
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Use shared hook for delegation data - React Query handles deduplication
-  const { data: delegation } = useUserDelegation(modalVisible ? stakeAddress : null);
+  // Centralized delegation data - passed to children to avoid duplicate queries
+  const {
+    data: delegation,
+    isLoading: delegationLoading,
+    error: delegationError,
+  } = useUserDelegation(modalVisible ? stakeAddress : null);
 
   const hasWallet = !!stakeAddress;
 
@@ -74,7 +78,12 @@ export function StakingTool() {
           >
             {stakeAddress && (
               <>
-                <CurrentDelegation stakeAddress={stakeAddress} />
+                <CurrentDelegation
+                  stakeAddress={stakeAddress}
+                  delegation={delegation}
+                  isLoading={delegationLoading}
+                  error={delegationError instanceof Error ? delegationError : null}
+                />
                 <RewardsChart stakeAddress={stakeAddress} />
                 <RecommendationList currentPoolId={delegation?.poolId ?? null} />
               </>

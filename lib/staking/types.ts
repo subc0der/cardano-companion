@@ -68,7 +68,6 @@ export type RecommendationReason =
   | 'higher_roa'
   | 'lower_saturation'
   | 'lower_fees'
-  | 'more_consistent'
   | 'better_overall';
 
 /**

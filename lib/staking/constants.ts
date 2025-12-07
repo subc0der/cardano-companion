@@ -90,7 +90,6 @@ export const RECOMMENDATION_REASON_LABELS: Record<RecommendationReason, string> 
   higher_roa: 'Higher Returns',
   lower_saturation: 'Lower Saturation',
   lower_fees: 'Lower Fees',
-  more_consistent: 'More Consistent',
   better_overall: 'Better Overall',
 };
 

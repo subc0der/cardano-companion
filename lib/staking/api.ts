@@ -41,10 +41,10 @@ export async function getUserDelegation(stakeAddress: string): Promise<Delegatio
 
 /**
  * Calculate ROA from pool history data using BigInt for precision.
- * ROA = (total rewards / total stake) * epochs per year * 100
+ * ROA = (avg rewards per epoch / avg stake per epoch) * epochs per year * 100
  *
- * Uses BigInt multiplication before division to maintain precision,
- * similar to the pattern in RewardsChart bar height calculation.
+ * Uses average values to correctly compute annualized returns.
+ * BigInt multiplication before division maintains precision.
  */
 function calculateROAFromHistory(history: BlockfrostPoolHistoryItem[]): number {
   if (history.length === 0) return 0;
@@ -59,11 +59,18 @@ function calculateROAFromHistory(history: BlockfrostPoolHistoryItem[]): number {
 
   if (totalStake === 0n) return 0;
 
+  // Calculate average rewards and stake per epoch
+  const epochs = BigInt(history.length);
+  const avgRewardsPerEpoch = totalRewards / epochs;
+  const avgStake = totalStake / epochs;
+
+  if (avgStake === 0n) return 0;
+
   // Calculate ROA using BigInt arithmetic to maintain precision
-  // ROA = (totalRewards / totalStake) * EPOCHS_PER_YEAR * 100
-  // Rewritten as: (totalRewards * EPOCHS_PER_YEAR * 100 * PRECISION) / totalStake / PRECISION
+  // ROA = (avgRewardsPerEpoch / avgStake) * EPOCHS_PER_YEAR * 100
+  // Rewritten as: (avgRewardsPerEpoch * EPOCHS_PER_YEAR * 100 * PRECISION) / avgStake
   const PRECISION = 10000n; // For 2 decimal places
-  const scaledROA = (totalRewards * BigInt(STAKING_CONFIG.EPOCHS_PER_YEAR) * 100n * PRECISION) / totalStake;
+  const scaledROA = (avgRewardsPerEpoch * BigInt(STAKING_CONFIG.EPOCHS_PER_YEAR) * 100n * PRECISION) / avgStake;
 
   return Number(scaledROA) / Number(PRECISION);
 }

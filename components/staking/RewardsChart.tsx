@@ -100,7 +100,12 @@ export function RewardsChart({ stakeAddress }: RewardsChartProps) {
       <Text style={styles.sectionTitle}>REWARDS HISTORY</Text>
 
       <View style={styles.chartContainer}>
-        <Svg width={CHART_WIDTH} height={CHART_HEIGHT + LABEL_HEIGHT}>
+        <Svg
+          width={CHART_WIDTH}
+          height={CHART_HEIGHT + LABEL_HEIGHT}
+          accessibilityLabel={`Rewards history chart showing ${chartData.length} epochs. Total rewards: ${formatAdaShort(stats.total)} ADA`}
+          accessible={true}
+        >
           {/* Y-axis labels */}
           <SvgText
             x={Y_AXIS_WIDTH - 8}
