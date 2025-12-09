@@ -7,6 +7,7 @@ import {
   type Token,
   DEX_INFO,
   DEX_SWAP_URLS,
+  DEFI_CONFIG,
   formatTokenAmount,
 } from '../../lib/defi';
 
@@ -78,8 +79,8 @@ export function DEXComparisonTable({
         if (canOpen) {
           await Linking.openURL(url);
         }
-      } catch {
-        // Silently fail
+      } catch (error) {
+        console.error('[DeFi] Failed to open DEX link:', error);
       }
     }
   };
@@ -99,7 +100,7 @@ export function DEXComparisonTable({
           const bestAmount = BigInt(sortedComparisons[0].amountOut);
           const thisAmount = BigInt(comparison.amountOut);
           if (bestAmount > 0) {
-            const diff = ((bestAmount - thisAmount) * BigInt(10000)) / bestAmount;
+            const diff = ((bestAmount - thisAmount) * DEFI_CONFIG.PERCENT_BIGINT_MULTIPLIER) / bestAmount;
             diffPercent = `-${(Number(diff) / 100).toFixed(2)}%`;
           }
         }

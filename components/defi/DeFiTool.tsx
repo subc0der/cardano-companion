@@ -27,6 +27,29 @@ import {
   parseTokenAmount,
 } from '../../lib/defi';
 
+/** Regex pattern for valid numeric input (positive numbers with optional decimals) */
+const VALID_AMOUNT_PATTERN = /^\d+(\.\d+)?$/;
+
+/**
+ * Validates if the input amount string represents a positive value.
+ * Uses BigInt for precision-safe validation.
+ */
+function isValidPositiveAmount(amount: string, decimals: number): boolean {
+  // First check if it matches valid numeric format
+  if (!VALID_AMOUNT_PATTERN.test(amount)) {
+    return false;
+  }
+
+  try {
+    const rawAmount = parseTokenAmount(amount, decimals);
+    return BigInt(rawAmount) > BigInt(0);
+  } catch (error) {
+    // Invalid amount string that can't be parsed
+    console.error('[DeFi] Invalid amount format:', error);
+    return false;
+  }
+}
+
 export function DeFiTool() {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -53,8 +76,7 @@ export function DeFiTool() {
   useEffect(() => {
     if (!modalVisible) return;
 
-    const amount = parseFloat(amountIn);
-    if (isNaN(amount) || amount <= 0) {
+    if (!isValidPositiveAmount(amountIn, tokenIn.decimals)) {
       setQuote(null);
       setQuoteError(null);
       return;
@@ -88,8 +110,7 @@ export function DeFiTool() {
 
   // Fetch comparison when requested
   const fetchComparison = useCallback(async () => {
-    const amount = parseFloat(amountIn);
-    if (isNaN(amount) || amount <= 0) return;
+    if (!isValidPositiveAmount(amountIn, tokenIn.decimals)) return;
 
     const rawAmount = parseTokenAmount(amountIn, tokenIn.decimals);
 

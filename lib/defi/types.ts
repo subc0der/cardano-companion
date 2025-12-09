@@ -38,8 +38,8 @@ export interface Token {
   logo: string | null;
   /** Whether token is verified by Minswap */
   verified: boolean;
-  /** USD price if available */
-  priceUsd: number | null;
+  /** Price in ADA if available (from Minswap API) */
+  priceInAda: number | null;
 }
 
 /**

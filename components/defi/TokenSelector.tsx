@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
-import { searchTokens, COMMON_TOKENS, type Token } from '../../lib/defi';
+import { searchTokens, COMMON_TOKENS, DEFI_CONFIG, type Token } from '../../lib/defi';
 
 interface TokenSelectorProps {
   visible: boolean;
@@ -47,6 +47,7 @@ export function TokenSelector({
     if (!visible) return;
 
     const timeoutId = setTimeout(async () => {
+      // Uses constant from DEFI_CONFIG for consistent debounce behavior
       if (searchQuery.length < 2) {
         setTokens([]);
         return;
@@ -64,7 +65,7 @@ export function TokenSelector({
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, DEFI_CONFIG.TOKEN_SEARCH_DEBOUNCE_MS);
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery, visible, excludeTokenId]);

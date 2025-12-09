@@ -112,8 +112,8 @@ function LinkRow({ label, url }: { label: string; url: string }) {
       if (canOpen) {
         await Linking.openURL(url);
       }
-    } catch {
-      // Silently fail - URL opening is best-effort
+    } catch (error) {
+      console.error('[Settings] Failed to open URL:', error);
     }
   };
 

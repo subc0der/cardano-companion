@@ -38,6 +38,9 @@ export const DEFI_CONFIG = {
 
   /** Default input amount for comparison (100 ADA in lovelace) */
   DEFAULT_COMPARE_AMOUNT: '100000000',
+
+  /** Multiplier for BigInt percentage calculations (10000 = 2 decimal precision) */
+  PERCENT_BIGINT_MULTIPLIER: BigInt(10000),
 } as const;
 
 /**
@@ -87,7 +90,7 @@ export const ADA_TOKEN: Token = {
   decimals: 6,
   logo: null,
   verified: true,
-  priceUsd: null,
+  priceInAda: 1, // ADA is always 1 ADA
 };
 
 /**
@@ -105,7 +108,7 @@ export const COMMON_TOKENS: Token[] = [
     decimals: 6,
     logo: 'https://asset-logos.minswap.org/29d222ce763455e3d7a09a665ce554f00ac89d2e99a1a83d267170c64d494e',
     verified: true,
-    priceUsd: null,
+    priceInAda: null,
   },
   {
     // SUNDAE token
@@ -115,7 +118,7 @@ export const COMMON_TOKENS: Token[] = [
     decimals: 6,
     logo: null,
     verified: true,
-    priceUsd: null,
+    priceInAda: null,
   },
   {
     // WRT token (WingRiders)
@@ -125,7 +128,7 @@ export const COMMON_TOKENS: Token[] = [
     decimals: 6,
     logo: null,
     verified: true,
-    priceUsd: null,
+    priceInAda: null,
   },
   {
     // DJED stablecoin
@@ -135,7 +138,7 @@ export const COMMON_TOKENS: Token[] = [
     decimals: 6,
     logo: null,
     verified: true,
-    priceUsd: null,
+    priceInAda: null,
   },
   {
     // iUSD (Indigo)
@@ -145,7 +148,7 @@ export const COMMON_TOKENS: Token[] = [
     decimals: 6,
     logo: null,
     verified: true,
-    priceUsd: null,
+    priceInAda: null,
   },
 ];
 

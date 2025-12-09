@@ -67,7 +67,7 @@ async function rateLimitedFetch(url: string, options?: RequestInit): Promise<Res
  * Get current ADA price in USD.
  * GET /ada-price?currency=usd
  */
-export async function getAdaPrice(): Promise<{ usd: number; eur: number }> {
+export async function getAdaPrice(): Promise<{ usd: number; eur: number } | null> {
   const cacheKey = 'ada-price';
   const cached = getCached<{ usd: number; eur: number }>(cacheKey);
   if (cached) return cached;
@@ -90,8 +90,8 @@ export async function getAdaPrice(): Promise<{ usd: number; eur: number }> {
     setCache(cacheKey, result, DEFI_CONFIG.PRICE_CACHE_TTL_MS);
     return result;
   } catch (error) {
-    // Return cached or default on error
-    return { usd: 0, eur: 0 };
+    console.error('[DeFi] Failed to fetch ADA price:', error);
+    return null;
   }
 }
 
@@ -138,7 +138,7 @@ export async function searchTokens(
       decimals: (t.decimals as number) || 0,
       logo: (t.logo as string) || null,
       verified: (t.is_verified || false) as boolean,
-      priceUsd: (t.price_by_ada as number) || null, // Note: this is price in ADA, not USD
+      priceInAda: (t.price_by_ada as number) || null,
     }));
 
     const result: TokenSearchResult = {
@@ -150,7 +150,7 @@ export async function searchTokens(
     setCache(cacheKey, result, DEFI_CONFIG.TOKEN_CACHE_TTL_MS);
     return result;
   } catch (error) {
-    // Return empty on error
+    console.error('[DeFi] Failed to search tokens:', error);
     return { tokens: [], hasMore: false, total: 0 };
   }
 }
@@ -273,7 +273,8 @@ async function getTokenInfo(tokenId: string): Promise<Token> {
       setCache(cacheKey, result.tokens[0], DEFI_CONFIG.TOKEN_CACHE_TTL_MS);
       return result.tokens[0];
     }
-  } catch {
+  } catch (error) {
+    console.error('[DeFi] Failed to get token info:', error);
     // Fall through to default
   }
 
@@ -285,7 +286,7 @@ async function getTokenInfo(tokenId: string): Promise<Token> {
     decimals: 0,
     logo: null,
     verified: false,
-    priceUsd: null,
+    priceInAda: null,
   };
 
   return defaultToken;
@@ -317,7 +318,8 @@ export async function getSwapEstimateFromDex(
     }
 
     return null;
-  } catch {
+  } catch (error) {
+    console.error(`[DeFi] Failed to get swap estimate from ${dex}:`, error);
     return null;
   }
 }
@@ -351,8 +353,8 @@ export async function compareAllDexes(
         results.set(route.protocol, quote);
       }
     }
-  } catch {
-    // Return empty results on error
+  } catch (error) {
+    console.error('[DeFi] Failed to compare DEXes:', error);
   }
 
   return results;

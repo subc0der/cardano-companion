@@ -67,8 +67,8 @@ export function SwapQuoteCard({ quote, loading, error }: SwapQuoteCardProps) {
         if (canOpen) {
           await Linking.openURL(url);
         }
-      } catch {
-        // Silently fail - user can manually navigate
+      } catch (error) {
+        console.error('[DeFi] Failed to open DEX swap link:', error);
       }
     }
   };
