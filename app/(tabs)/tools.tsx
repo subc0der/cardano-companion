@@ -4,6 +4,7 @@ import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
 import { StakingTool } from '../../components/staking';
 import { ExportTool } from '../../components/tools/ExportTool';
+import { DeFiTool } from '../../components/defi';
 
 export default function ToolsScreen() {
   return (
@@ -11,6 +12,7 @@ export default function ToolsScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>TOOLS</Text>
         <View style={styles.toolsList}>
+          <DeFiTool />
           <StakingTool />
           <ExportTool />
         </View>
