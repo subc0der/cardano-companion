@@ -91,15 +91,17 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
         const amountOutNum = Number(quote.amountOut) / Math.pow(10, pair.tokenOut.decimals);
         const rate = amountOutNum;
 
-        // Calculate 24h change if we have previous data
+        // Calculate price change since last update.
+        // NOTE: This is NOT a true 24h change - it measures change since last update,
+        // which may be any interval. Field is named priceChange24h for UI consistency.
         let priceChange24h: number | null = null;
-        if (pair.lastRate !== null && pair.lastUpdated !== null) {
+        if (pair.lastRate !== null && pair.lastRate !== 0 && pair.lastUpdated !== null) {
           const hoursSinceUpdate = (Date.now() - pair.lastUpdated) / (1000 * 60 * 60);
           // Only calculate change if we have data from at least 1 hour ago
           if (hoursSinceUpdate >= 1) {
             priceChange24h = ((rate - pair.lastRate) / pair.lastRate) * 100;
           } else {
-            // Preserve existing 24h change if we're updating frequently
+            // Preserve existing change if we're updating frequently
             priceChange24h = pair.priceChange24h;
           }
         }

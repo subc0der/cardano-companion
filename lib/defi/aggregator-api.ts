@@ -285,6 +285,10 @@ async function getTokenInfo(tokenId: string): Promise<Token> {
     // Token ID format: policyId (56 chars) + assetName (hex)
     const assetNameHex = tokenId.slice(56);
     try {
+      // Validate hex string has even length (each byte = 2 hex chars)
+      if (assetNameHex.length % 2 !== 0) {
+        throw new Error('Asset name hex length is not even');
+      }
       // Decode hex to ASCII
       let decoded = '';
       for (let i = 0; i < assetNameHex.length; i += 2) {

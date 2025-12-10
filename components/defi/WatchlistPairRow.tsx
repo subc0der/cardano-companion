@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, GestureResponderEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
@@ -27,20 +27,20 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
   };
 
   const formatChange = (change: number | null): string => {
-    if (change === null) return 'N/A';
+    if (change === null || !isFinite(change)) return 'N/A';
     const prefix = change >= 0 ? '+' : '';
     return `${prefix}${change.toFixed(2)}%`;
   };
 
   const getChangeColor = (change: number | null): string => {
-    if (change === null) return cyberpunk.textMuted;
+    if (change === null || !isFinite(change)) return cyberpunk.textMuted;
     if (change > 0) return cyberpunk.success;
     if (change < 0) return cyberpunk.error;
     return cyberpunk.textSecondary;
   };
 
   const getChangeIcon = (change: number | null): 'caret-up' | 'caret-down' | 'remove' => {
-    if (change === null) return 'remove';
+    if (change === null || !isFinite(change)) return 'remove';
     if (change > 0) return 'caret-up';
     if (change < 0) return 'caret-down';
     return 'remove';
@@ -91,7 +91,10 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
       {/* Remove Button */}
       <Pressable
         style={styles.removeButton}
-        onPress={() => onRemove(pair.id)}
+        onPress={(e: GestureResponderEvent) => {
+          e.stopPropagation();
+          onRemove(pair.id);
+        }}
         hitSlop={8}
         accessibilityRole="button"
         accessibilityLabel={`Remove ${pair.tokenIn.ticker} to ${pair.tokenOut.ticker} pair`}
