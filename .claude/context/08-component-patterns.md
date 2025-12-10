@@ -210,3 +210,58 @@ changes parent state, they race against each other. This leads to:
 **One action = one callback.** If selecting something closes the modal, that's
 the parent's decision to make in response to `onSelect`. The child just reports
 what happened.
+
+## Nested Pressable Event Handling
+
+When nesting Pressable or TouchableOpacity elements (e.g., a delete button inside a row), use `e.stopPropagation()` to prevent the outer handler from firing:
+
+```typescript
+// Row component with nested remove button
+<Pressable onPress={() => onSelectRow(item)}>
+  <View style={styles.rowContent}>
+    <Text>{item.name}</Text>
+  </View>
+
+  {/* Nested button - MUST stop propagation */}
+  <Pressable
+    onPress={(e) => {
+      e.stopPropagation();  // Prevents row's onPress from firing
+      onRemove(item.id);
+    }}
+    hitSlop={8}
+  >
+    <Ionicons name="trash-outline" size={18} />
+  </Pressable>
+</Pressable>
+```
+
+### Why This Matters
+Without `e.stopPropagation()`, clicking the remove button triggers BOTH:
+1. The remove action (intended)
+2. The row selection (unintended)
+
+This causes confusing UX where removing an item also selects it.
+
+## Displaying Calculated Numbers
+
+Always guard against invalid numeric values before displaying:
+
+```typescript
+// BAD: Can display "Infinity%", "-Infinity%", or "NaN%"
+const formatChange = (change: number | null): string => {
+  if (change === null) return 'N/A';
+  return `${change.toFixed(2)}%`;
+};
+
+// GOOD: Guards against non-finite values
+const formatChange = (change: number | null): string => {
+  if (change === null || !isFinite(change)) return 'N/A';
+  const prefix = change >= 0 ? '+' : '';
+  return `${prefix}${change.toFixed(2)}%`;
+};
+```
+
+Apply `isFinite()` checks to:
+- Format functions that display percentages/numbers
+- Color getters based on numeric values
+- Icon selectors based on numeric comparisons
