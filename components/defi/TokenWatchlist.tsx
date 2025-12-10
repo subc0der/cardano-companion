@@ -64,13 +64,16 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
   const refreshPrices = useCallback(async () => {
     // Prevent overlapping refresh calls
     if (isRefreshingRef.current) return;
-    if (pairs.length === 0) return;
+
+    // Get current pairs directly from store to avoid stale closure
+    const currentPairs = useWatchlistStore.getState().pairs;
+    if (currentPairs.length === 0) return;
 
     isRefreshingRef.current = true;
     setIsRefreshing(true);
 
     // Queue price updates with rate limiting (2s minimum between requests)
-    for (const pair of pairs) {
+    for (const pair of currentPairs) {
       if (!isMounted.current) break;
 
       setRefreshingPairId(pair.id);
@@ -121,7 +124,7 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
       setIsRefreshing(false);
     }
     isRefreshingRef.current = false;
-  }, [pairs, updatePairRate]);
+  }, [updatePairRate]);
 
   const handlePairPress = useCallback((pair: TokenPair) => {
     onSelectPair(pair.tokenIn, pair.tokenOut);

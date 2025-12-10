@@ -97,3 +97,31 @@ const value = await SecureStore.getItemAsync('key');
 - SecureStore: 2048 bytes per value
 - AsyncStorage: No practical limit
 - Choose based on data sensitivity
+
+## Zustand Best Practices
+
+### Avoiding Stale Closures in Callbacks
+When a callback uses store state and needs the latest value (not the value at
+callback creation time), use `getState()` instead of the hook's return value:
+
+```typescript
+// BAD: Uses stale `items` from closure
+const processItems = useCallback(async () => {
+  for (const item of items) {  // items is stale!
+    await doSomething(item);
+  }
+}, [items]);
+
+// GOOD: Gets fresh state directly from store
+const processItems = useCallback(async () => {
+  const currentItems = useMyStore.getState().items;
+  for (const item of currentItems) {
+    await doSomething(item);
+  }
+}, []);
+```
+
+This is especially important when:
+- The callback is called right after a state update (before re-render)
+- The callback runs asynchronously and state may change during execution
+- The callback is used as a dependency in another callback
