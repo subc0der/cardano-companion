@@ -73,9 +73,9 @@ export function TokenSelector({
   const handleSelectToken = useCallback(
     (token: Token) => {
       onSelect(token);
-      onClose();
+      // Don't call onClose here - parent controls visibility via onSelect handler
     },
-    [onSelect, onClose]
+    [onSelect]
   );
 
   const filteredCommonTokens = COMMON_TOKENS.filter((t) => t.id !== excludeTokenId);

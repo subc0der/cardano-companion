@@ -6,6 +6,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants/storageKeys';
 
 /** Available currency display options */
 export type CurrencyDisplay = 'ADA' | 'USD' | 'EUR';
@@ -71,7 +72,7 @@ export const useSettingsStore = create<SettingsState>()(
         set(DEFAULT_SETTINGS),
     }),
     {
-      name: 'settings-storage',
+      name: STORAGE_KEYS.SETTINGS,
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

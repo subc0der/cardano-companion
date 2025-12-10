@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants/storageKeys';
 
 interface PrivacyState {
   hideBalances: boolean;
@@ -20,7 +21,7 @@ export const usePrivacyStore = create<PrivacyState>()(
         set((state) => ({ hideAddresses: !state.hideAddresses })),
     }),
     {
-      name: 'privacy-storage',
+      name: STORAGE_KEYS.PRIVACY,
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

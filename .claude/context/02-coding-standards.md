@@ -31,6 +31,15 @@
 - Log errors with context for debugging
 - Never swallow errors silently
 
+### Defensive Programming
+- Guard against division by zero before any division operation
+- Use `isFinite()` checks before displaying calculated numbers (prevents "Infinity" or "NaN" in UI)
+- Validate hex string lengths are even before hex-to-ASCII decoding
+- Provide fallbacks when string decoding produces no usable result (e.g., no printable chars)
+- Use `e.stopPropagation()` on nested Pressable/TouchableOpacity to prevent event bubbling
+- Add clear comments when calculations are approximations (e.g., "not true 24h change")
+- Comments about rate limiting should reference where the actual limiting occurs
+
 ### TypeScript
 - Strict mode enabled
 - Define interfaces for all props and state

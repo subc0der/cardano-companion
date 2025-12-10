@@ -7,3 +7,5 @@ export { DeFiTool } from './DeFiTool';
 export { TokenSelector } from './TokenSelector';
 export { SwapQuoteCard } from './SwapQuoteCard';
 export { DEXComparisonTable } from './DEXComparisonTable';
+export { TokenWatchlist } from './TokenWatchlist';
+export { WatchlistPairRow } from './WatchlistPairRow';

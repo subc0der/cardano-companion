@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants/storageKeys';
 
 interface WalletState {
   address: string | null;
@@ -20,7 +21,7 @@ export const useWalletStore = create<WalletState>()(
       clearWallet: () => set({ address: null, stakeAddress: null }),
     }),
     {
-      name: 'wallet-storage',
+      name: STORAGE_KEYS.WALLET,
       storage: createJSONStorage(() => AsyncStorage),
     }
   )
