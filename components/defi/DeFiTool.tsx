@@ -14,6 +14,7 @@ import { CyberButton } from '../ui/CyberButton';
 import { TokenSelector } from './TokenSelector';
 import { SwapQuoteCard } from './SwapQuoteCard';
 import { DEXComparisonTable } from './DEXComparisonTable';
+import { TokenWatchlist } from './TokenWatchlist';
 import {
   type Token,
   type SwapQuote,
@@ -25,7 +26,10 @@ import {
   getSwapEstimate,
   compareAllDexes,
   parseTokenAmount,
+  formatTokenAmount,
 } from '../../lib/defi';
+
+type DeFiTab = 'swap' | 'watchlist';
 
 /** Regex pattern for valid numeric input (positive numbers with optional decimals) */
 const VALID_AMOUNT_PATTERN = /^\d+(\.\d+)?$/;
@@ -52,6 +56,7 @@ function isValidPositiveAmount(amount: string, decimals: number): boolean {
 
 export function DeFiTool() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState<DeFiTab>('swap');
 
   // Token selection
   const [tokenIn, setTokenIn] = useState<Token>(ADA_TOKEN);
@@ -189,6 +194,14 @@ export function DeFiTool() {
     setShowComparison(false);
   };
 
+  // Handle watchlist pair selection - switch to swap tab with selected pair
+  const handleWatchlistPairSelect = useCallback((pairTokenIn: Token, pairTokenOut: Token) => {
+    setTokenIn(pairTokenIn);
+    setTokenOut(pairTokenOut);
+    setActiveTab('swap');
+    setShowComparison(false);
+  }, []);
+
   return (
     <>
       {/* Tool Card Button */}
@@ -228,6 +241,35 @@ export function DeFiTool() {
             </Pressable>
           </View>
 
+          {/* Tab Navigation */}
+          <View style={styles.tabContainer}>
+            <Pressable
+              style={[styles.tab, activeTab === 'swap' && styles.tabActive]}
+              onPress={() => setActiveTab('swap')}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: activeTab === 'swap' }}
+            >
+              <Text style={[styles.tabText, activeTab === 'swap' && styles.tabTextActive]}>
+                SWAP
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.tab, activeTab === 'watchlist' && styles.tabActive]}
+              onPress={() => setActiveTab('watchlist')}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: activeTab === 'watchlist' }}
+            >
+              <Text style={[styles.tabText, activeTab === 'watchlist' && styles.tabTextActive]}>
+                WATCHLIST
+              </Text>
+            </Pressable>
+          </View>
+
+          {activeTab === 'watchlist' ? (
+            <View style={styles.watchlistContainer}>
+              <TokenWatchlist onSelectPair={handleWatchlistPairSelect} />
+            </View>
+          ) : (
           <ScrollView
             style={styles.modalContent}
             contentContainerStyle={styles.modalContentContainer}
@@ -283,7 +325,7 @@ export function DeFiTool() {
                   </Pressable>
                   <View style={styles.amountOutput}>
                     <Text style={styles.amountOutputText}>
-                      {quote ? quote.amountOut : '—'}
+                      {quote ? formatTokenAmount(quote.amountOut, quote.tokenOut.decimals) : '—'}
                     </Text>
                   </View>
                 </View>
@@ -322,6 +364,7 @@ export function DeFiTool() {
               />
             )}
           </ScrollView>
+          )}
 
           {/* Footer */}
           <View style={styles.modalFooter}>
@@ -406,6 +449,35 @@ const styles = StyleSheet.create({
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.md,
     color: cyberpunk.textMuted,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: cyberpunk.bgTertiary,
+  },
+  tab: {
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginRight: 8,
+  },
+  tabActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: cyberpunk.neonCyan,
+  },
+  tabText: {
+    fontFamily: typography.fonts.primary,
+    fontSize: typography.sizes.sm,
+    color: cyberpunk.textMuted,
+    letterSpacing: 2,
+  },
+  tabTextActive: {
+    color: cyberpunk.neonCyan,
+  },
+  watchlistContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 8,
   },
   modalContent: {
     flex: 1,

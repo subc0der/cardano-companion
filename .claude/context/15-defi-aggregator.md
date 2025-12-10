@@ -531,24 +531,26 @@ export async function detectLPPositions(
 
 ## Implementation Phases
 
-### Phase 1: Basic Price Comparison
-- [ ] Create defi types and constants
-- [ ] Implement Minswap aggregator API client
-- [ ] Build TokenSelector component
-- [ ] Build SwapQuote component showing best rate
-- [ ] Add to Tools tab as subtab
+### Phase 1: Basic Price Comparison (Complete)
+- [x] Create defi types and constants
+- [x] Implement Minswap aggregator API client
+- [x] Build TokenSelector component
+- [x] Build SwapQuote component showing best rate
+- [x] Add to Tools tab as subtab
 
-### Phase 2: Multi-DEX Comparison
-- [ ] Implement per-DEX quote fetching
-- [ ] Build DEXComparisonTable component
-- [ ] Add "Swap on X" external links
-- [ ] Rate limiting and caching
+### Phase 2: Multi-DEX Comparison (Complete)
+- [x] Implement per-DEX quote fetching
+- [x] Build DEXComparisonTable component
+- [x] Add "Swap on X" external links
+- [x] Rate limiting and caching
 
-### Phase 3: Token Watchlist
-- [ ] Create watchlist store (Zustand + persistence)
-- [ ] Build TokenWatchlist component
-- [ ] Add 24h price change indicators
-- [ ] Quick-compare from watchlist
+### Phase 3: Token Watchlist (Complete)
+- [x] Create watchlist store (Zustand + persistence) - `lib/stores/defiWatchlistStore.ts`
+- [x] Build TokenWatchlist component - `components/defi/TokenWatchlist.tsx`
+- [x] Add 24h price change indicators - Calculated from stored historical rates
+- [x] Quick-compare from watchlist - Tap pair to load into swap view
+- [x] WatchlistPairRow component - `components/defi/WatchlistPairRow.tsx`
+- [x] Tab navigation in DeFiTool (SWAP / WATCHLIST tabs)
 
 ### Phase 4: LP Position Tracking
 - [ ] Research LP token policy IDs per DEX

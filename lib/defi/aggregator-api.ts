@@ -279,11 +279,35 @@ async function getTokenInfo(tokenId: string): Promise<Token> {
   }
 
   // Return a default token object
+  // The asset name portion of token IDs is hex-encoded - try to decode it
+  let ticker = 'UNKNOWN';
+  if (tokenId.length > 56) {
+    // Token ID format: policyId (56 chars) + assetName (hex)
+    const assetNameHex = tokenId.slice(56);
+    try {
+      // Decode hex to ASCII
+      let decoded = '';
+      for (let i = 0; i < assetNameHex.length; i += 2) {
+        const charCode = parseInt(assetNameHex.slice(i, i + 2), 16);
+        // Only include printable ASCII characters
+        if (charCode >= 32 && charCode <= 126) {
+          decoded += String.fromCharCode(charCode);
+        }
+      }
+      if (decoded.length > 0) {
+        ticker = decoded.slice(0, 10).toUpperCase();
+      }
+    } catch {
+      // Fall back to truncated ID
+      ticker = tokenId.slice(-6).toUpperCase();
+    }
+  }
+
   const defaultToken: Token = {
     id: tokenId,
-    ticker: tokenId.length > 8 ? tokenId.slice(-8).toUpperCase() : tokenId.toUpperCase(),
+    ticker,
     name: 'Unknown Token',
-    decimals: 0,
+    decimals: 6, // Most Cardano tokens use 6 decimals
     logo: null,
     verified: false,
     priceInAda: null,
