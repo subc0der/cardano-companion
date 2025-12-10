@@ -300,6 +300,9 @@ async function getTokenInfo(tokenId: string): Promise<Token> {
       }
       if (decoded.length > 0) {
         ticker = decoded.slice(0, 10).toUpperCase();
+      } else {
+        // No printable chars - use truncated ID
+        ticker = tokenId.slice(-6).toUpperCase();
       }
     } catch {
       // Fall back to truncated ID

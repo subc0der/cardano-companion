@@ -72,7 +72,8 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
     isRefreshingRef.current = true;
     setIsRefreshing(true);
 
-    // Queue price updates with rate limiting (2s minimum between requests)
+    // Fetch prices sequentially - rateLimitedFetch in aggregator-api.ts
+    // enforces MIN_REQUEST_INTERVAL_MS (2s) between API calls
     for (const pair of currentPairs) {
       if (!isMounted.current) break;
 

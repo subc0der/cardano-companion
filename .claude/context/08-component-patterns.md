@@ -262,6 +262,7 @@ const formatChange = (change: number | null): string => {
 ```
 
 Apply `isFinite()` checks to:
-- Format functions that display percentages/numbers
+- Format functions that display percentages/numbers (including `toLocaleString` calls)
 - Color getters based on numeric values
 - Icon selectors based on numeric comparisons
+- Rate/price formatters that depend on division results

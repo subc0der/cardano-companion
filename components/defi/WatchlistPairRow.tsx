@@ -20,7 +20,7 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
     : false;
 
   const formatRate = (rate: number | null): string => {
-    if (rate === null) return '---';
+    if (rate === null || !isFinite(rate)) return '---';
     if (rate >= 1000) return rate.toLocaleString('en-US', { maximumFractionDigits: 0 });
     if (rate >= 1) return rate.toLocaleString('en-US', { maximumFractionDigits: 2 });
     return rate.toLocaleString('en-US', { maximumFractionDigits: 6 });
