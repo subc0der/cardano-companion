@@ -19,8 +19,11 @@ type AddStep = 'idle' | 'selectFrom' | 'selectTo';
 export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
   const { pairs, addPair, removePair, updatePairRate, hasPair } = useWatchlistStore();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshingPairId, setRefreshingPairId] = useState<string | null>(null);
   const [addStep, setAddStep] = useState<AddStep>('idle');
   const [pendingTokenIn, setPendingTokenIn] = useState<Token | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Track if component is mounted for async cleanup
   const isMounted = useRef(true);
@@ -30,7 +33,22 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
     isMounted.current = true;
     return () => {
       isMounted.current = false;
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
     };
+  }, []);
+
+  const showToast = useCallback((message: string) => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+    setToastMessage(message);
+    toastTimeoutRef.current = setTimeout(() => {
+      if (isMounted.current) {
+        setToastMessage(null);
+      }
+    }, 3000);
   }, []);
 
   // Refresh prices on mount (only once)
@@ -54,6 +72,8 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
     // Queue price updates with rate limiting (2s minimum between requests)
     for (const pair of pairs) {
       if (!isMounted.current) break;
+
+      setRefreshingPairId(pair.id);
 
       try {
         // Use 1 whole unit of tokenIn (not 1 lovelace) to get a meaningful rate
@@ -92,6 +112,10 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
     }
 
     if (isMounted.current) {
+      setRefreshingPairId(null);
+    }
+
+    if (isMounted.current) {
       setIsRefreshing(false);
     }
     isRefreshingRef.current = false;
@@ -109,28 +133,18 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
     setAddStep('selectFrom');
   }, []);
 
-  // Track if selection is in progress to avoid close handler resetting state
-  const selectionInProgress = useRef(false);
-
   const handleSelectFromToken = useCallback((token: Token) => {
-    selectionInProgress.current = true;
     setPendingTokenIn(token);
     setAddStep('selectTo');
-    // Reset flag after state update
-    setTimeout(() => {
-      selectionInProgress.current = false;
-    }, 0);
   }, []);
 
   const handleSelectToToken = useCallback((token: Token) => {
-    selectionInProgress.current = true;
     if (pendingTokenIn) {
       // Check if pair already exists
       if (hasPair(pendingTokenIn.id, token.id)) {
-        // Pair already exists, just close
+        showToast(`${pendingTokenIn.ticker}/${token.ticker} is already in your watchlist`);
         setAddStep('idle');
         setPendingTokenIn(null);
-        selectionInProgress.current = false;
         return;
       }
 
@@ -138,27 +152,23 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
       if (success) {
         // Immediately fetch price for new pair
         refreshPrices();
+      } else {
+        // addPair returns false when capacity limit is reached
+        showToast(`Watchlist is full (max ${DEFI_CONFIG.MAX_WATCHLIST_PAIRS} pairs)`);
       }
     }
     setAddStep('idle');
     setPendingTokenIn(null);
-    selectionInProgress.current = false;
-  }, [pendingTokenIn, addPair, hasPair, refreshPrices]);
+  }, [pendingTokenIn, addPair, hasPair, refreshPrices, showToast]);
 
-  // Close handler for FROM token - only cancel if not a selection
   const handleCloseFromSelector = useCallback(() => {
-    if (!selectionInProgress.current) {
-      setAddStep('idle');
-      setPendingTokenIn(null);
-    }
+    setAddStep('idle');
+    setPendingTokenIn(null);
   }, []);
 
-  // Close handler for TO token - only cancel if not a selection
   const handleCloseToSelector = useCallback(() => {
-    if (!selectionInProgress.current) {
-      setAddStep('idle');
-      setPendingTokenIn(null);
-    }
+    setAddStep('idle');
+    setPendingTokenIn(null);
   }, []);
 
   const canAddMore = pairs.length < DEFI_CONFIG.MAX_WATCHLIST_PAIRS;
@@ -207,6 +217,7 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
               pair={pair}
               onPress={handlePairPress}
               onRemove={handleRemovePair}
+              isLoading={refreshingPairId === pair.id}
             />
           ))}
         </ScrollView>
@@ -250,6 +261,14 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
         title="SELECT TO TOKEN"
         excludeTokenId={pendingTokenIn?.id}
       />
+
+      {/* Toast notification */}
+      {toastMessage && (
+        <View style={styles.toast}>
+          <Ionicons name="information-circle" size={16} color={cyberpunk.textPrimary} />
+          <Text style={styles.toastText}>{toastMessage}</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -348,5 +367,25 @@ const styles = StyleSheet.create({
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
     color: cyberpunk.warning,
+  },
+  toast: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: cyberpunk.bgTertiary,
+    borderWidth: 1,
+    borderColor: cyberpunk.neonCyan,
+    borderRadius: 8,
+    padding: 12,
+  },
+  toastText: {
+    flex: 1,
+    fontFamily: typography.fonts.mono,
+    fontSize: typography.sizes.sm,
+    color: cyberpunk.textPrimary,
   },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
@@ -9,11 +9,12 @@ interface WatchlistPairRowProps {
   pair: TokenPair;
   onPress: (pair: TokenPair) => void;
   onRemove: (pairId: string) => void;
+  isLoading?: boolean;
 }
 
 const STALE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
 
-export function WatchlistPairRow({ pair, onPress, onRemove }: WatchlistPairRowProps) {
+export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }: WatchlistPairRowProps) {
   const isStale = pair.lastUpdated
     ? Date.now() - pair.lastUpdated > STALE_THRESHOLD_MS
     : false;
@@ -71,14 +72,20 @@ export function WatchlistPairRow({ pair, onPress, onRemove }: WatchlistPairRowPr
 
       {/* Price Change */}
       <View style={styles.changeContainer}>
-        <Ionicons
-          name={getChangeIcon(pair.priceChange24h)}
-          size={14}
-          color={getChangeColor(pair.priceChange24h)}
-        />
-        <Text style={[styles.changeText, { color: getChangeColor(pair.priceChange24h) }]}>
-          {formatChange(pair.priceChange24h)}
-        </Text>
+        {isLoading ? (
+          <ActivityIndicator size="small" color={cyberpunk.neonCyan} />
+        ) : (
+          <>
+            <Ionicons
+              name={getChangeIcon(pair.priceChange24h)}
+              size={14}
+              color={getChangeColor(pair.priceChange24h)}
+            />
+            <Text style={[styles.changeText, { color: getChangeColor(pair.priceChange24h) }]}>
+              {formatChange(pair.priceChange24h)}
+            </Text>
+          </>
+        )}
       </View>
 
       {/* Remove Button */}

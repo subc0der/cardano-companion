@@ -154,3 +154,59 @@ const styles = StyleSheet.create({
 - Provide default values for optional props
 - Destructure props in function signature
 - Document complex props with comments
+
+## Modal/Selector Pattern
+
+When building modals or selectors that the user picks from, follow this pattern:
+
+### Single Source of Truth for Visibility
+The **parent** controls visibility via a prop. The child never closes itself directly.
+
+```typescript
+// GOOD: Parent controls visibility via state
+// Parent component
+const [showSelector, setShowSelector] = useState(false);
+
+<TokenSelector
+  visible={showSelector}
+  onSelect={(token) => {
+    // Handle selection
+    doSomethingWith(token);
+    // Parent decides when to close
+    setShowSelector(false);
+  }}
+  onClose={() => setShowSelector(false)}
+/>
+
+// TokenSelector.tsx - Child only calls onSelect
+const handleSelectToken = (token: Token) => {
+  onSelect(token);  // Just notify parent, don't call onClose
+};
+```
+
+### Don't Fire Both `onSelect` AND `onClose`
+
+```typescript
+// BAD: Firing both callbacks causes race conditions
+const handleSelectToken = (token: Token) => {
+  onSelect(token);
+  onClose();  // DON'T DO THIS - parent already handles closing in onSelect
+};
+
+// GOOD: Only fire onSelect, let parent manage state
+const handleSelectToken = (token: Token) => {
+  onSelect(token);
+};
+```
+
+### Why This Matters
+If `onSelect` changes parent state that affects visibility, AND `onClose` also
+changes parent state, they race against each other. This leads to:
+- Needing refs to track "in-progress" states (code smell)
+- Subtle bugs where state gets reset unexpectedly
+- Confusing event flow that's hard to debug
+
+### The Rule
+**One action = one callback.** If selecting something closes the modal, that's
+the parent's decision to make in response to `onSelect`. The child just reports
+what happened.

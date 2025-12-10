@@ -12,6 +12,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants/storageKeys';
 import type {
   GameState,
   GamePhase,
@@ -389,7 +390,7 @@ export const useGameStore = create<GameStore>()(
       },
     }),
     {
-      name: 'ada-rollz-storage',
+      name: STORAGE_KEYS.GAME,
       storage: createJSONStorage(() => AsyncStorage),
       // Only persist points, not game state
       partialize: (state) => ({ points: state.points }),

@@ -10,6 +10,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Token, TokenPair } from '../defi/types';
 import { DEFI_CONFIG } from '../defi/constants';
+import { STORAGE_KEYS } from '../constants/storageKeys';
 
 interface WatchlistState {
   /** Saved token pairs (max 10) */
@@ -109,7 +110,7 @@ export const useWatchlistStore = create<WatchlistState>()(
       },
     }),
     {
-      name: 'defi-watchlist-storage',
+      name: STORAGE_KEYS.DEFI_WATCHLIST,
       storage: createJSONStorage(() => AsyncStorage),
     }
   )
