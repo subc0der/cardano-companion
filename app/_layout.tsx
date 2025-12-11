@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cyberpunk } from '../lib/theme/colors';
+import Constants from 'expo-constants';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,28 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
+
+  // Initialize notifications and background task (skip in Expo Go)
+  useEffect(() => {
+    const isExpoGo = Constants.appOwnership === 'expo';
+    if (isExpoGo) {
+      // Notifications not supported in Expo Go for SDK 53+
+      return;
+    }
+
+    const initNotifications = async () => {
+      try {
+        // Dynamic import to avoid loading expo-notifications in Expo Go
+        const notifications = await import('../lib/notifications');
+        notifications.configureNotifications();
+        await notifications.setupNotificationChannel();
+        await notifications.registerBackgroundAlertTask();
+      } catch {
+        // Notification setup may fail - ignore
+      }
+    };
+    initNotifications();
+  }, []);
 
   if (!loaded && !error) {
     return null;
