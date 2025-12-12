@@ -53,6 +53,13 @@ export function PairAlertSection({ pair }: PairAlertSectionProps) {
       const success = addAlert(pair.id, config);
       if (success) {
         setShowSetupModal(false);
+      } else {
+        // Alert limit reached - inform user
+        Alert.alert(
+          'Alert Limit Reached',
+          `You can have at most ${ALERT_LIMITS.MAX_PER_PAIR} alerts per pair and ${ALERT_LIMITS.MAX_TOTAL} total alerts.`,
+          [{ text: 'OK' }]
+        );
       }
     },
     [pair.id, addAlert]

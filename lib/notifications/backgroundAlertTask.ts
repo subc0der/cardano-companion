@@ -20,10 +20,14 @@ export const BACKGROUND_ALERT_TASK = 'background-price-alert-check';
 /** Minimum interval between background checks (1 hour in seconds) */
 const BACKGROUND_CHECK_INTERVAL_SECONDS = 60 * 60;
 
-/** Check if TaskManager native module is available */
+/**
+ * Check if TaskManager native module is available.
+ * Returns false in Expo Go where native modules aren't available.
+ */
 const isTaskManagerAvailable = (): boolean => {
   try {
-    return TaskManager.isAvailableAsync !== undefined;
+    // Check that the function exists and is callable
+    return typeof TaskManager.isAvailableAsync === 'function';
   } catch {
     return false;
   }
@@ -55,6 +59,7 @@ if (isTaskManagerAvailable()) {
 
     // Fetch current prices for pairs with active alerts
     const updatedPairs: Map<string, TokenPair> = new Map();
+    let fetchFailCount = 0;
 
     for (const pairId of pairIds) {
       const pair = watchlistStore.pairs.find((p) => p.id === pairId);
@@ -81,8 +86,15 @@ if (isTaskManagerAvailable()) {
       } catch (error) {
         // Log error for debugging, but continue processing other pairs
         console.warn(`[BackgroundAlert] Failed to fetch price for pair ${pairId}:`, error);
+        fetchFailCount++;
         continue;
       }
+    }
+
+    // If all fetches failed, report failure
+    if (fetchFailCount === pairIds.length && pairIds.length > 0) {
+      console.error('[BackgroundAlert] All price fetches failed - possible network issue');
+      return BackgroundFetch.BackgroundFetchResult.Failed;
     }
 
     // Check each active alert

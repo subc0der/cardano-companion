@@ -25,7 +25,7 @@
 - NO any type - always define proper TypeScript types
 - NO inline styles for repeated patterns - use StyleSheet
 - NO autoFocus on TextInput fields - can be disruptive for accessibility and screen readers
-- NO store mutations from background tasks - can cause race conditions with foreground app
+- AVOID store mutations from background tasks - prefer read-only access. Exceptions allowed for idempotent status updates with clear documentation (e.g., marking alerts as triggered)
 
 ### Error Handling
 - Always handle async errors with try/catch

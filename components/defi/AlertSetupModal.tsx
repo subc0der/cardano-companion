@@ -126,6 +126,26 @@ export function AlertSetupModal({
     }
   }, [alertType, targetRate, percentThreshold, pair]);
 
+  /** Get validation error message for current input, if any */
+  const getValidationError = useCallback((): string | null => {
+    if (alertType === 'price_target') {
+      if (!targetRate) return null; // No error for empty input
+      const rate = parseFloat(targetRate);
+      if (isNaN(rate)) return 'Please enter a valid number';
+      if (rate < ALERT_VALIDATION.MIN_TARGET_RATE) return 'Value is too small';
+      if (rate > ALERT_VALIDATION.MAX_TARGET_RATE) return 'Value is too large';
+      return null;
+    } else {
+      if (!percentThreshold) return null; // No error for empty input
+      const threshold = parseFloat(percentThreshold);
+      if (isNaN(threshold)) return 'Please enter a valid number';
+      if (threshold < ALERT_VALIDATION.MIN_PERCENT_THRESHOLD) return 'Minimum is 0.01%';
+      if (threshold > ALERT_VALIDATION.MAX_PERCENT_THRESHOLD) return 'Maximum is 1000%';
+      if (pair?.lastRate === null) return 'Current rate unavailable';
+      return null;
+    }
+  }, [alertType, targetRate, percentThreshold, pair]);
+
   if (!pair) return null;
 
   return (
@@ -271,6 +291,9 @@ export function AlertSetupModal({
                   placeholderTextColor={cyberpunk.textMuted}
                   keyboardType="decimal-pad"
                 />
+                {alertType === 'price_target' && getValidationError() && (
+                  <Text style={styles.errorText}>{getValidationError()}</Text>
+                )}
               </View>
             </>
           )}
@@ -342,7 +365,10 @@ export function AlertSetupModal({
                   placeholderTextColor={cyberpunk.textMuted}
                   keyboardType="decimal-pad"
                 />
-                {pair.lastRate === null && (
+                {alertType === 'percent_change' && getValidationError() && (
+                  <Text style={styles.errorText}>{getValidationError()}</Text>
+                )}
+                {!getValidationError() && pair.lastRate === null && (
                   <Text style={styles.warningText}>
                     No current rate - fetch prices first
                   </Text>
@@ -528,6 +554,12 @@ const styles = StyleSheet.create({
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
     color: cyberpunk.warning,
+    marginTop: 8,
+  },
+  errorText: {
+    fontFamily: typography.fonts.mono,
+    fontSize: typography.sizes.xs,
+    color: cyberpunk.error,
     marginTop: 8,
   },
   actions: {

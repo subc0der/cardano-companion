@@ -68,24 +68,31 @@ export async function checkPermissions(): Promise<boolean> {
 
 /**
  * Schedule a local notification for a price alert.
+ * Returns notification ID on success, null on failure.
  */
 export async function sendPriceAlertNotification(
   notification: PriceAlertNotification
-): Promise<string> {
-  const notificationId = await Notifications.scheduleNotificationAsync({
-    content: {
-      title: notification.title,
-      body: notification.body,
-      data: notification.data,
-      sound: 'default',
-      ...(Platform.OS === 'android' && {
-        channelId: PRICE_ALERT_CHANNEL_ID,
-      }),
-    },
-    trigger: null, // Immediate delivery
-  });
+): Promise<string | null> {
+  try {
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: notification.title,
+        body: notification.body,
+        data: notification.data,
+        sound: 'default',
+        ...(Platform.OS === 'android' && {
+          channelId: PRICE_ALERT_CHANNEL_ID,
+        }),
+      },
+      trigger: null, // Immediate delivery
+    });
 
-  return notificationId;
+    return notificationId;
+  } catch (error) {
+    // Log but don't throw - notification failure shouldn't crash background task
+    console.warn('[Notifications] Failed to send price alert:', error);
+    return null;
+  }
 }
 
 /**
