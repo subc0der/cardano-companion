@@ -44,6 +44,21 @@
 - Add clear comments when calculations are approximations (e.g., "not true 24h change")
 - Comments about rate limiting should reference where the actual limiting occurs
 
+### Input Validation
+- Validate user input bounds for numeric fields (min/max) to prevent overflow/underflow
+- Use constants for validation bounds (e.g., `MAX_PERCENT_THRESHOLD = 1000`)
+- For crypto prices: allow range from 1e-12 to 1e12 to handle both micro and macro values
+- For percentages: typically 0.01% to 1000% is reasonable
+
+### User Feedback
+- Always inform users when permissions are denied (use `Alert.alert()` for critical feedback)
+- Don't silently fail operations that require user action to fix
+- Provide clear guidance on how to resolve permission issues
+
+### ID Generation
+- Use `crypto.randomUUID()` for unique identifiers (guaranteed uniqueness)
+- Avoid `Math.random()` for IDs - not cryptographically secure and can collide
+
 ### TypeScript
 - Strict mode enabled
 - Define interfaces for all props and state

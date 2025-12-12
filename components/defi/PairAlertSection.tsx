@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { cyberpunk } from '../../lib/theme/colors';
@@ -33,6 +33,11 @@ export function PairAlertSection({ pair }: PairAlertSectionProps) {
         const { requestPermissions } = await import('../../lib/notifications');
         const granted = await requestPermissions();
         if (!granted) {
+          Alert.alert(
+            'Notifications Required',
+            'Price alerts require notification permissions to notify you when prices change. Please enable notifications in your device settings.',
+            [{ text: 'OK' }]
+          );
           return;
         }
       } catch (error) {

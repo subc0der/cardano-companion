@@ -16,6 +16,18 @@ import type { AlertConfig, AlertCondition } from '../../lib/defi/alertTypes';
 import type { TokenPair } from '../../lib/defi/types';
 import { formatAlertRate } from '../../lib/defi/alertService';
 
+/** Validation bounds for alert inputs */
+const ALERT_VALIDATION = {
+  /** Maximum target rate (prevents overflow issues) */
+  MAX_TARGET_RATE: 1e12,
+  /** Minimum target rate */
+  MIN_TARGET_RATE: 1e-12,
+  /** Maximum percent threshold */
+  MAX_PERCENT_THRESHOLD: 1000,
+  /** Minimum percent threshold */
+  MIN_PERCENT_THRESHOLD: 0.01,
+} as const;
+
 interface AlertSetupModalProps {
   visible: boolean;
   pair: TokenPair | null;
@@ -58,7 +70,14 @@ export function AlertSetupModal({
 
     if (alertType === 'price_target') {
       const rate = parseFloat(targetRate);
-      if (isNaN(rate) || rate <= 0) return;
+      // Validate rate is within reasonable bounds
+      if (
+        isNaN(rate) ||
+        rate < ALERT_VALIDATION.MIN_TARGET_RATE ||
+        rate > ALERT_VALIDATION.MAX_TARGET_RATE
+      ) {
+        return;
+      }
 
       config = {
         type: 'price_target',
@@ -67,7 +86,14 @@ export function AlertSetupModal({
       };
     } else {
       const threshold = parseFloat(percentThreshold);
-      if (isNaN(threshold) || threshold <= 0) return;
+      // Validate threshold is within reasonable bounds (0.01% to 1000%)
+      if (
+        isNaN(threshold) ||
+        threshold < ALERT_VALIDATION.MIN_PERCENT_THRESHOLD ||
+        threshold > ALERT_VALIDATION.MAX_PERCENT_THRESHOLD
+      ) {
+        return;
+      }
 
       config = {
         type: 'percent_change',
@@ -84,10 +110,19 @@ export function AlertSetupModal({
   const isValid = useCallback(() => {
     if (alertType === 'price_target') {
       const rate = parseFloat(targetRate);
-      return !isNaN(rate) && rate > 0;
+      return (
+        !isNaN(rate) &&
+        rate >= ALERT_VALIDATION.MIN_TARGET_RATE &&
+        rate <= ALERT_VALIDATION.MAX_TARGET_RATE
+      );
     } else {
       const threshold = parseFloat(percentThreshold);
-      return !isNaN(threshold) && threshold > 0 && pair?.lastRate !== null;
+      return (
+        !isNaN(threshold) &&
+        threshold >= ALERT_VALIDATION.MIN_PERCENT_THRESHOLD &&
+        threshold <= ALERT_VALIDATION.MAX_PERCENT_THRESHOLD &&
+        pair?.lastRate !== null
+      );
     }
   }, [alertType, targetRate, percentThreshold, pair]);
 

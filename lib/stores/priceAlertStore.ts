@@ -72,7 +72,8 @@ interface PriceAlertState {
 }
 
 function generateAlertId(): string {
-  return `alert_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  // Use crypto.randomUUID for guaranteed uniqueness
+  return `alert_${crypto.randomUUID()}`;
 }
 
 export const usePriceAlertStore = create<PriceAlertState>()(

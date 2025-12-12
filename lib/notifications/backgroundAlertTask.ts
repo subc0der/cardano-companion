@@ -86,6 +86,10 @@ if (isTaskManagerAvailable()) {
     }
 
     // Check each active alert
+    // Note: Alert store mutations here are acceptable because:
+    // 1. Zustand handles concurrent updates atomically
+    // 2. Worst case: user removes alert while we trigger it = no-op (alert already gone)
+    // 3. The triggered state is idempotent - triggering twice has same result
     let triggeredCount = 0;
 
     for (const alert of activeAlerts) {
@@ -95,7 +99,7 @@ if (isTaskManagerAvailable()) {
       const result = checkAlert(alert, pair);
 
       if (result.shouldTrigger) {
-        // Update alert status
+        // Update alert status (idempotent - safe if alert was modified)
         alertStore.updateAlertStatus(alert.id, 'triggered', result.currentRate);
 
         // Send notification
