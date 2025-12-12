@@ -45,8 +45,9 @@ export default function RootLayout() {
         notifications.configureNotifications();
         await notifications.setupNotificationChannel();
         await notifications.registerBackgroundAlertTask();
-      } catch {
-        // Notification setup may fail - ignore
+      } catch (error) {
+        // Log for diagnostics in development builds
+        console.warn('[Notifications] Setup failed:', error);
       }
     };
     initNotifications();

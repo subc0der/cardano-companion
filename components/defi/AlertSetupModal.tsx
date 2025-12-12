@@ -235,7 +235,6 @@ export function AlertSetupModal({
                   placeholder="0.00"
                   placeholderTextColor={cyberpunk.textMuted}
                   keyboardType="decimal-pad"
-                  autoFocus
                 />
               </View>
             </>
@@ -307,7 +306,6 @@ export function AlertSetupModal({
                   placeholder="5"
                   placeholderTextColor={cyberpunk.textMuted}
                   keyboardType="decimal-pad"
-                  autoFocus
                 />
                 {pair.lastRate === null && (
                   <Text style={styles.warningText}>

@@ -76,10 +76,11 @@ if (isTaskManagerAvailable()) {
         };
         updatedPairs.set(pairId, updatedPair);
 
-        // Update watchlist store with new rate
-        watchlistStore.updatePairRate(pairId, rate, pair.priceChange24h);
-      } catch {
-        // Skip pairs that fail to fetch
+        // Note: Not updating watchlist store from background task to avoid race conditions
+        // The rate is only used locally for alert checking
+      } catch (error) {
+        // Log error for debugging, but continue processing other pairs
+        console.warn(`[BackgroundAlert] Failed to fetch price for pair ${pairId}:`, error);
         continue;
       }
     }
@@ -112,7 +113,8 @@ if (isTaskManagerAvailable()) {
     return triggeredCount > 0
       ? BackgroundFetch.BackgroundFetchResult.NewData
       : BackgroundFetch.BackgroundFetchResult.NoData;
-  } catch {
+  } catch (error) {
+    console.error('[BackgroundAlert] Task failed:', error);
     return BackgroundFetch.BackgroundFetchResult.Failed;
   }
   });
@@ -145,7 +147,8 @@ export async function registerBackgroundAlertTask(): Promise<boolean> {
     });
 
     return true;
-  } catch {
+  } catch (error) {
+    console.warn('[BackgroundAlert] Failed to register task:', error);
     return false;
   }
 }
@@ -160,8 +163,9 @@ export async function unregisterBackgroundAlertTask(): Promise<void> {
 
   try {
     await BackgroundFetch.unregisterTaskAsync(BACKGROUND_ALERT_TASK);
-  } catch {
-    // Ignore errors during unregistration
+  } catch (error) {
+    // Log but don't fail - unregistration errors are non-critical
+    console.warn('[BackgroundAlert] Failed to unregister task:', error);
   }
 }
 

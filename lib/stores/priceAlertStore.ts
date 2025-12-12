@@ -58,6 +58,9 @@ interface PriceAlertState {
   /** Get count of triggered (unread) alerts */
   getTriggeredCount: () => number;
 
+  /** Get total alert count */
+  getTotalAlertCount: () => number;
+
   /** Toggle notifications globally */
   toggleNotifications: () => void;
 
@@ -168,6 +171,10 @@ export const usePriceAlertStore = create<PriceAlertState>()(
 
       getTriggeredCount: () => {
         return get().alerts.filter((a) => a.status === 'triggered').length;
+      },
+
+      getTotalAlertCount: () => {
+        return get().alerts.length;
       },
 
       toggleNotifications: () => {

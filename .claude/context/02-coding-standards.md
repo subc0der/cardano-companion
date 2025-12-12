@@ -20,16 +20,20 @@
 - NO hardcoded file paths - use constants or environment variables
 - NO magic numbers - define named constants with units in name (e.g., `CACHE_TTL_MS = 30000`)
 - NO redundant code - DRY principle, extract shared logic
-- NO unused imports, variables, or dead code
-- NO console.log in production code - use proper logging
+- NO unused imports, variables, or dead code - destructure only what you use from stores/hooks
+- NO console.log in production code - use `console.warn()` or `console.error()` for diagnostics
 - NO any type - always define proper TypeScript types
 - NO inline styles for repeated patterns - use StyleSheet
+- NO autoFocus on TextInput fields - can be disruptive for accessibility and screen readers
+- NO store mutations from background tasks - can cause race conditions with foreground app
 
 ### Error Handling
 - Always handle async errors with try/catch
 - Provide meaningful error messages to users
-- Log errors with context for debugging
-- Never swallow errors silently
+- Log errors with context for debugging using `console.warn()` or `console.error()`
+- Never swallow errors silently - at minimum log with `console.warn('[ComponentName] Message:', error)`
+- Use prefixed log messages: `[ModuleName]` for easier debugging (e.g., `[BackgroundAlert]`, `[Notifications]`)
+- Acceptable silent catches: parsing fallbacks where the fallback is the intended behavior
 
 ### Defensive Programming
 - Guard against division by zero before any division operation

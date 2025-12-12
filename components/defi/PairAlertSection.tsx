@@ -16,12 +16,12 @@ interface PairAlertSectionProps {
 
 export function PairAlertSection({ pair }: PairAlertSectionProps) {
   const [showSetupModal, setShowSetupModal] = useState(false);
-  const { alerts, addAlert, removeAlert, reactivateAlert, getAlertsForPair } =
+  const { addAlert, removeAlert, reactivateAlert, getAlertsForPair, getTotalAlertCount } =
     usePriceAlertStore();
 
   const pairAlerts = getAlertsForPair(pair.id);
   const canAddMore = pairAlerts.length < ALERT_LIMITS.MAX_PER_PAIR;
-  const totalAlerts = alerts.length;
+  const totalAlerts = getTotalAlertCount();
   const canAddTotal = totalAlerts < ALERT_LIMITS.MAX_TOTAL;
 
   const handleAddPress = useCallback(async () => {
@@ -35,8 +35,9 @@ export function PairAlertSection({ pair }: PairAlertSectionProps) {
         if (!granted) {
           return;
         }
-      } catch {
-        // Notification module not available
+      } catch (error) {
+        // Log but continue - notification module may not be available in Expo Go
+        console.warn('[PairAlertSection] Permission request failed:', error);
       }
     }
     setShowSetupModal(true);
