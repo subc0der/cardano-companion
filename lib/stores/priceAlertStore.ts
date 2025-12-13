@@ -71,9 +71,30 @@ interface PriceAlertState {
   clearAllAlerts: () => void;
 }
 
+/** Counter for additional uniqueness in same-millisecond calls */
+let alertIdCounter = 0;
+
+/**
+ * Generate a unique alert ID.
+ * Uses crypto.randomUUID if available (modern environments),
+ * falls back to timestamp + counter + random for React Native compatibility.
+ */
 function generateAlertId(): string {
-  // Use crypto.randomUUID for guaranteed uniqueness
-  return `alert_${crypto.randomUUID()}`;
+  // Try crypto.randomUUID first (available in modern JS environments)
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    try {
+      return `alert_${crypto.randomUUID()}`;
+    } catch {
+      // Fall through to fallback
+    }
+  }
+
+  // Fallback for React Native: timestamp + counter + random
+  alertIdCounter = (alertIdCounter + 1) % 10000;
+  const timestamp = Date.now().toString(36);
+  const counter = alertIdCounter.toString(36).padStart(3, '0');
+  const random = Math.random().toString(36).substring(2, 8);
+  return `alert_${timestamp}_${counter}_${random}`;
 }
 
 export const usePriceAlertStore = create<PriceAlertState>()(

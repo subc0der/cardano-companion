@@ -111,12 +111,16 @@ if (isTaskManagerAvailable()) {
       return BackgroundFetch.BackgroundFetchResult.Failed;
     }
 
-    // Check each active alert
+    // Check each active alert and collect triggered ones
     // Note: Alert store mutations here are acceptable because:
     // 1. Zustand handles concurrent updates atomically
     // 2. Worst case: user removes alert while we trigger it = no-op (alert already gone)
     // 3. The triggered state is idempotent - triggering twice has same result
-    let triggeredCount = 0;
+    const triggeredAlerts: Array<{
+      alertId: string;
+      notification: ReturnType<typeof buildNotification>;
+      currentRate: number;
+    }> = [];
 
     for (const alert of activeAlerts) {
       const pair = updatedPairs.get(alert.pairId);
@@ -127,15 +131,34 @@ if (isTaskManagerAvailable()) {
       if (result.shouldTrigger) {
         // Update alert status (idempotent - safe if alert was modified)
         alertStore.updateAlertStatus(alert.id, 'triggered', result.currentRate);
-
-        // Send notification
-        const notification = buildNotification(result, pair);
-        await sendPriceAlertNotification(notification);
-        alertStore.markNotificationSent(alert.id);
-
-        triggeredCount++;
+        triggeredAlerts.push({
+          alertId: alert.id,
+          notification: buildNotification(result, pair),
+          currentRate: result.currentRate,
+        });
       }
     }
+
+    // Send all notifications in parallel for faster execution
+    if (triggeredAlerts.length > 0) {
+      const notificationResults = await Promise.allSettled(
+        triggeredAlerts.map(({ notification }) => sendPriceAlertNotification(notification))
+      );
+
+      // Mark notifications as sent for successful ones
+      notificationResults.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          alertStore.markNotificationSent(triggeredAlerts[index].alertId);
+        } else {
+          console.warn(
+            `[BackgroundAlert] Failed to send notification for alert ${triggeredAlerts[index].alertId}:`,
+            result.reason
+          );
+        }
+      });
+    }
+
+    const triggeredCount = triggeredAlerts.length;
 
     // Update last check timestamp
     alertStore.setLastBackgroundCheck(Date.now());

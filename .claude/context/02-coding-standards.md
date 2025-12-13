@@ -52,10 +52,13 @@
 - When checking for truthy numeric values, also check `> 0` (e.g., `value != null && value > 0`)
 
 ### Input Validation
-- Validate user input bounds for numeric fields (min/max) to prevent overflow/underflow
+- Always use `isFinite(value)` before numeric comparisons (catches NaN, Infinity, -Infinity)
+- Check `value > 0` for values that must be positive (prices, percentages, amounts)
+- Full validation pattern: `isFinite(value) && value > 0 && value >= MIN && value <= MAX`
 - Use constants for validation bounds (e.g., `MAX_PERCENT_THRESHOLD = 1000`)
 - For crypto prices: allow range from 1e-12 to 1e12 to handle both micro and macro values
 - For percentages: typically 0.01% to 1000% is reasonable
+- Show specific error messages: "Price must be positive" rather than generic "Invalid value"
 
 ### User Feedback
 - Always inform users when permissions are denied (use `Alert.alert()` for critical feedback)
@@ -63,8 +66,11 @@
 - Provide clear guidance on how to resolve permission issues
 
 ### ID Generation
-- Use `crypto.randomUUID()` for unique identifiers (guaranteed uniqueness)
-- Avoid `Math.random()` for IDs - not cryptographically secure and can collide
+- Prefer `crypto.randomUUID()` for unique identifiers (guaranteed uniqueness)
+- In React Native: crypto.randomUUID() may not be available - implement fallback
+- Fallback pattern: `${Date.now().toString(36)}_${counter}_${Math.random().toString(36).substring(2)}`
+- Always check `typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'` before using
+- Avoid plain `Math.random()` alone for IDs - not cryptographically secure and can collide
 
 ### Modal Accessibility
 - Add `accessibilityRole="button"` and `accessibilityLabel` to dismissible overlay Pressables

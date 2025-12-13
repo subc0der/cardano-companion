@@ -70,9 +70,10 @@ export function AlertSetupModal({
 
     if (alertType === 'price_target') {
       const rate = parseFloat(targetRate);
-      // Validate rate is within reasonable bounds
+      // Validate rate is positive, finite, and within reasonable bounds
       if (
-        isNaN(rate) ||
+        !isFinite(rate) ||
+        rate <= 0 ||
         rate < ALERT_VALIDATION.MIN_TARGET_RATE ||
         rate > ALERT_VALIDATION.MAX_TARGET_RATE
       ) {
@@ -86,9 +87,10 @@ export function AlertSetupModal({
       };
     } else {
       const threshold = parseFloat(percentThreshold);
-      // Validate threshold is within reasonable bounds (0.01% to 1000%)
+      // Validate threshold is positive, finite, and within reasonable bounds
       if (
-        isNaN(threshold) ||
+        !isFinite(threshold) ||
+        threshold <= 0 ||
         threshold < ALERT_VALIDATION.MIN_PERCENT_THRESHOLD ||
         threshold > ALERT_VALIDATION.MAX_PERCENT_THRESHOLD
       ) {
@@ -116,15 +118,17 @@ export function AlertSetupModal({
     if (alertType === 'price_target') {
       const rate = parseFloat(targetRate);
       return (
-        !isNaN(rate) &&
+        isFinite(rate) &&
+        rate > 0 &&
         rate >= ALERT_VALIDATION.MIN_TARGET_RATE &&
         rate <= ALERT_VALIDATION.MAX_TARGET_RATE
       );
     } else {
       const threshold = parseFloat(percentThreshold);
-      // Use loose equality to catch both null and undefined; also require positive rate
+      // Require positive, finite threshold and valid base rate
       return (
-        !isNaN(threshold) &&
+        isFinite(threshold) &&
+        threshold > 0 &&
         threshold >= ALERT_VALIDATION.MIN_PERCENT_THRESHOLD &&
         threshold <= ALERT_VALIDATION.MAX_PERCENT_THRESHOLD &&
         pair?.lastRate != null &&
@@ -138,14 +142,16 @@ export function AlertSetupModal({
     if (alertType === 'price_target') {
       if (!targetRate) return null; // No error for empty input
       const rate = parseFloat(targetRate);
-      if (isNaN(rate)) return 'Please enter a valid number';
+      if (!isFinite(rate)) return 'Please enter a valid number';
+      if (rate <= 0) return 'Price must be positive';
       if (rate < ALERT_VALIDATION.MIN_TARGET_RATE) return 'Value is too small';
       if (rate > ALERT_VALIDATION.MAX_TARGET_RATE) return 'Value is too large';
       return null;
     } else {
       if (!percentThreshold) return null; // No error for empty input
       const threshold = parseFloat(percentThreshold);
-      if (isNaN(threshold)) return 'Please enter a valid number';
+      if (!isFinite(threshold)) return 'Please enter a valid number';
+      if (threshold <= 0) return 'Percentage must be positive';
       if (threshold < ALERT_VALIDATION.MIN_PERCENT_THRESHOLD) return 'Minimum is 0.01%';
       if (threshold > ALERT_VALIDATION.MAX_PERCENT_THRESHOLD) return 'Maximum is 1000%';
       // Use loose equality to catch both null and undefined
