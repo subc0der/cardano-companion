@@ -42,8 +42,8 @@ export function checkAlert(
       message = `${pair.tokenIn.ticker}/${pair.tokenOut.ticker} is now below ${formatAlertRate(config.targetRate)}`;
     }
   } else if (config.type === 'percent_change') {
-    // Guard against division by zero
-    if (config.baseRate === 0) {
+    // Guard against invalid baseRate (zero, negative, NaN, Infinity)
+    if (!isFinite(config.baseRate) || config.baseRate <= 0) {
       return {
         alert,
         shouldTrigger: false,

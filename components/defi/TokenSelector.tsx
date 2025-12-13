@@ -132,6 +132,8 @@ export function TokenSelector({
             onChangeText={setSearchQuery}
             autoCapitalize="none"
             autoCorrect={false}
+            accessibilityLabel="Token search"
+            accessibilityHint="Search for tokens by name or ticker symbol"
           />
         </View>
 

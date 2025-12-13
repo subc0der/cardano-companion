@@ -220,8 +220,8 @@ const styles = StyleSheet.create({
   },
   alertBadge: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: -2,
+    right: -2,
     backgroundColor: cyberpunk.neonCyan,
     borderRadius: 6,
     minWidth: 12,

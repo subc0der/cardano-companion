@@ -296,6 +296,8 @@ export function DeFiTool() {
                     keyboardType="decimal-pad"
                     placeholder="0.00"
                     placeholderTextColor={cyberpunk.textMuted}
+                    accessibilityLabel="Amount to swap"
+                    accessibilityHint="Enter the amount of tokens you want to swap"
                   />
                 </View>
               </View>

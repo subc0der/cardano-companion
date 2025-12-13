@@ -38,11 +38,18 @@
 ### Defensive Programming
 - Guard against division by zero before any division operation
 - Use `isFinite()` checks before displaying calculated numbers (prevents "Infinity" or "NaN" in UI)
+- For numeric validation: use `!isFinite(value) || value <= 0` to catch zero, negative, NaN, and Infinity
 - Validate hex string lengths are even before hex-to-ASCII decoding
 - Provide fallbacks when string decoding produces no usable result (e.g., no printable chars)
 - Use `e.stopPropagation()` on nested Pressable/TouchableOpacity to prevent event bubbling
 - Add clear comments when calculations are approximations (e.g., "not true 24h change")
 - Comments about rate limiting should reference where the actual limiting occurs
+
+### Null/Undefined Checking
+- Use loose equality (`== null`) to catch both null and undefined in a single check
+- Avoid `=== null` when undefined is also a possible value (e.g., optional chaining results)
+- Example: `if (value == null)` catches both `null` and `undefined`
+- When checking for truthy numeric values, also check `> 0` (e.g., `value != null && value > 0`)
 
 ### Input Validation
 - Validate user input bounds for numeric fields (min/max) to prevent overflow/underflow
@@ -58,6 +65,31 @@
 ### ID Generation
 - Use `crypto.randomUUID()` for unique identifiers (guaranteed uniqueness)
 - Avoid `Math.random()` for IDs - not cryptographically secure and can collide
+
+### Modal Accessibility
+- Add `accessibilityRole="button"` and `accessibilityLabel` to dismissible overlay Pressables
+- Example: `<Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close dialog" />`
+- Add `accessibilityViewIsModal` to Modal components for proper screen reader announcements
+- Buttons that perform actions should have descriptive accessibilityLabel (e.g., "Remove alert", "Add to watchlist")
+
+### TextInput Accessibility
+- Add `accessibilityLabel` to describe what the input is for (e.g., "Target rate for price alert")
+- Add `accessibilityHint` to provide usage guidance (e.g., "Enter the exchange rate that will trigger this alert")
+- Screen reader users rely on these properties to understand input purpose
+
+### Background Task Best Practices
+- Document that background task intervals are minimum/approximate, not guaranteed
+- Mention that OS may delay or skip tasks based on battery state, power mode, etc.
+- Keep background task comments accurate about what actually happens vs. what is intended
+- Use `Promise.allSettled()` for parallel API fetching (background tasks have time limits)
+- Avoid sequential loops with await for multiple API calls
+- Handle partial failures gracefully (some requests may succeed while others fail)
+
+### Native Build Workflow
+- This project requires native builds (not Expo Go) for background task features
+- Run `npx expo prebuild` before first build
+- Use `npm run android` (not `expo start`) for development
+- Ensure Android SDK and build tools are properly configured
 
 ### TypeScript
 - Strict mode enabled

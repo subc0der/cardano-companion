@@ -35,7 +35,10 @@ const isTaskManagerAvailable = (): boolean => {
 
 /**
  * Define the background task.
- * This runs every hour (approximately) when app is closed.
+ * This runs approximately every hour when app is closed.
+ * Note: The interval is a minimum - actual execution timing depends on system
+ * resources, device state (battery, power mode), and OS scheduling. The task
+ * may be delayed or skipped by the system to conserve battery.
  * Only define if TaskManager is available (not in Expo Go).
  */
 if (isTaskManagerAvailable()) {
@@ -57,42 +60,53 @@ if (isTaskManagerAvailable()) {
     // Get unique pair IDs from active alerts
     const pairIds = [...new Set(activeAlerts.map((a) => a.pairId))];
 
-    // Fetch current prices for pairs with active alerts
-    const updatedPairs: Map<string, TokenPair> = new Map();
-    let fetchFailCount = 0;
+    // Build list of pairs to fetch
+    const pairsToFetch = pairIds
+      .map((pairId) => watchlistStore.pairs.find((p) => p.id === pairId))
+      .filter((pair): pair is TokenPair => pair !== undefined);
 
-    for (const pairId of pairIds) {
-      const pair = watchlistStore.pairs.find((p) => p.id === pairId);
-      if (!pair) continue;
+    if (pairsToFetch.length === 0) {
+      return BackgroundFetch.BackgroundFetchResult.NoData;
+    }
 
-      try {
+    // Fetch current prices in parallel for faster execution
+    // Background tasks have time limits, so parallel fetching is preferred
+    const fetchResults = await Promise.allSettled(
+      pairsToFetch.map(async (pair) => {
         const oneUnit = Math.pow(10, pair.tokenIn.decimals).toString();
         const quote = await getSwapEstimate({
           tokenIn: pair.tokenIn.id,
           tokenOut: pair.tokenOut.id,
           amountIn: oneUnit,
         });
-
         const rate = Number(quote.amountOut) / Math.pow(10, pair.tokenOut.decimals);
+        return { pair, rate };
+      })
+    );
+
+    // Process results and build updated pairs map
+    const updatedPairs: Map<string, TokenPair> = new Map();
+    let fetchFailCount = 0;
+
+    fetchResults.forEach((result, index) => {
+      const pair = pairsToFetch[index];
+      if (result.status === 'fulfilled') {
         const updatedPair: TokenPair = {
           ...pair,
-          lastRate: rate,
+          lastRate: result.value.rate,
           lastUpdated: Date.now(),
         };
-        updatedPairs.set(pairId, updatedPair);
-
+        updatedPairs.set(pair.id, updatedPair);
         // Note: Not updating watchlist store from background task to avoid race conditions
         // The rate is only used locally for alert checking
-      } catch (error) {
-        // Log error for debugging, but continue processing other pairs
-        console.warn(`[BackgroundAlert] Failed to fetch price for pair ${pairId}:`, error);
+      } else {
+        console.warn(`[BackgroundAlert] Failed to fetch price for pair ${pair.id}:`, result.reason);
         fetchFailCount++;
-        continue;
       }
-    }
+    });
 
     // If all fetches failed, report failure
-    if (fetchFailCount === pairIds.length && pairIds.length > 0) {
+    if (fetchFailCount === pairsToFetch.length) {
       console.error('[BackgroundAlert] All price fetches failed - possible network issue');
       return BackgroundFetch.BackgroundFetchResult.Failed;
     }

@@ -95,11 +95,16 @@ export function AlertSetupModal({
         return;
       }
 
+      // Require valid lastRate for percent change alerts (prevents division by zero)
+      if (pair.lastRate == null || pair.lastRate <= 0) {
+        return;
+      }
+
       config = {
         type: 'percent_change',
         percentThreshold: threshold,
         direction,
-        baseRate: pair.lastRate ?? 0,
+        baseRate: pair.lastRate,
       };
     }
 
@@ -117,11 +122,13 @@ export function AlertSetupModal({
       );
     } else {
       const threshold = parseFloat(percentThreshold);
+      // Use loose equality to catch both null and undefined; also require positive rate
       return (
         !isNaN(threshold) &&
         threshold >= ALERT_VALIDATION.MIN_PERCENT_THRESHOLD &&
         threshold <= ALERT_VALIDATION.MAX_PERCENT_THRESHOLD &&
-        pair?.lastRate !== null
+        pair?.lastRate != null &&
+        pair.lastRate > 0
       );
     }
   }, [alertType, targetRate, percentThreshold, pair]);
@@ -141,7 +148,8 @@ export function AlertSetupModal({
       if (isNaN(threshold)) return 'Please enter a valid number';
       if (threshold < ALERT_VALIDATION.MIN_PERCENT_THRESHOLD) return 'Minimum is 0.01%';
       if (threshold > ALERT_VALIDATION.MAX_PERCENT_THRESHOLD) return 'Maximum is 1000%';
-      if (pair?.lastRate === null) return 'Current rate unavailable';
+      // Use loose equality to catch both null and undefined
+      if (pair?.lastRate == null || pair.lastRate <= 0) return 'Current rate unavailable';
       return null;
     }
   }, [alertType, targetRate, percentThreshold, pair]);
@@ -154,17 +162,28 @@ export function AlertSetupModal({
       animationType="fade"
       transparent
       onRequestClose={handleClose}
+      accessibilityViewIsModal
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.overlay}
       >
-        <Pressable style={styles.overlayBackground} onPress={handleClose} />
+        <Pressable
+          style={styles.overlayBackground}
+          onPress={handleClose}
+          accessibilityRole="button"
+          accessibilityLabel="Close alert setup"
+        />
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>NEW ALERT</Text>
-            <Pressable onPress={handleClose} hitSlop={8}>
+            <Pressable
+              onPress={handleClose}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Close"
+            >
               <Ionicons name="close" size={24} color={cyberpunk.textSecondary} />
             </Pressable>
           </View>
@@ -290,6 +309,8 @@ export function AlertSetupModal({
                   placeholder="0.00"
                   placeholderTextColor={cyberpunk.textMuted}
                   keyboardType="decimal-pad"
+                  accessibilityLabel="Target rate for price alert"
+                  accessibilityHint="Enter the exchange rate that will trigger this alert"
                 />
                 {alertType === 'price_target' && getValidationError() && (
                   <Text style={styles.errorText}>{getValidationError()}</Text>
@@ -364,11 +385,13 @@ export function AlertSetupModal({
                   placeholder="5"
                   placeholderTextColor={cyberpunk.textMuted}
                   keyboardType="decimal-pad"
+                  accessibilityLabel="Percent change threshold"
+                  accessibilityHint="Enter the percentage change that will trigger this alert"
                 />
                 {alertType === 'percent_change' && getValidationError() && (
                   <Text style={styles.errorText}>{getValidationError()}</Text>
                 )}
-                {!getValidationError() && pair.lastRate === null && (
+                {!getValidationError() && (pair.lastRate == null || pair.lastRate <= 0) && (
                   <Text style={styles.warningText}>
                     No current rate - fetch prices first
                   </Text>
