@@ -20,6 +20,9 @@ export const STORAGE_KEYS = {
 
   /** DeFi watchlist token pairs */
   DEFI_WATCHLIST: 'defi-watchlist-storage',
+
+  /** Price alerts for watchlist pairs */
+  PRICE_ALERTS: 'price-alerts-storage',
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

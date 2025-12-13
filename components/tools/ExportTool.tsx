@@ -87,7 +87,12 @@ export function ExportTool() {
         accessibilityViewIsModal={true}
         accessibilityLabel="Export transactions dialog"
       >
-        <Pressable style={styles.overlay} onPress={handleCloseModal}>
+        <Pressable
+          style={styles.overlay}
+          onPress={handleCloseModal}
+          accessibilityRole="button"
+          accessibilityLabel="Close export dialog"
+        >
           <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
             <Text style={styles.title}>EXPORT TRANSACTIONS</Text>
 

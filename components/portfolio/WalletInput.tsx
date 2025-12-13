@@ -100,6 +100,8 @@ export function WalletInput({ onConnected }: WalletInputProps) {
         autoCorrect={false}
         multiline
         numberOfLines={2}
+        accessibilityLabel="Wallet address input"
+        accessibilityHint="Enter a Cardano wallet address, stake address, or ADA Handle"
       />
 
       {error && <Text style={styles.error}>{error}</Text>}
