@@ -120,3 +120,38 @@
 - When feedback identifies an issue, proactively fix ALL instances
 - Search codebase for similar patterns before marking resolved
 - Document fixes for future reference
+
+## Intentional Design Decisions
+
+These patterns are intentional and should NOT be changed despite automated review feedback:
+
+### Price Alert Comparison Operators
+- Price target alerts use `>=` and `<=` operators (not `>` and `<`)
+- UX semantics: "Alert when above $1" means "at or above $1"
+- This inclusive behavior is more intuitive for price alerts
+- DO NOT change to strict comparison operators
+
+### Background Task Store Mutations
+- Alert store mutations in background tasks are ALLOWED for:
+  - `updateAlertStatus()` - marking alerts as triggered
+  - `markNotificationSent()` - tracking notification delivery
+- These operations are safe because:
+  1. Zustand handles concurrent updates atomically
+  2. Operations are idempotent (triggering twice = same result)
+  3. Worst case: user removes alert while triggering = no-op
+- DO NOT remove these mutations or make background tasks read-only
+
+### Silent Catches for Fallback Patterns
+- Empty catch blocks are acceptable when the fallback IS the intended behavior:
+  - Hex decoding with fallback to truncated display
+  - crypto.randomUUID() with fallback to timestamp-based ID
+  - JSON parsing with fallback to default error message
+  - API call failure in batch operations (tracked via null return)
+- These do NOT need console.warn/console.error as the fallback handles it
+- DO NOT add logging to these fallback patterns
+
+### KeyboardAvoidingView on Android
+- Using `behavior="height"` on Android is intentional
+- Tested and working on target device (Pixel 9 Pro)
+- `behavior="padding"` causes issues with this UI layout
+- DO NOT change to padding or remove for Android

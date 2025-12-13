@@ -25,6 +25,35 @@ This is a React Native Expo app for Cardano blockchain. Android only, tested on 
 - Suggesting abstractions for small, one-off implementations
 - Issues already fixed in previous commits (check the full diff, not just individual files)
 
+## Intentional Design Decisions (Do NOT Flag These)
+
+### Price Alert Comparison Operators
+- Using `>=` and `<=` for price target alerts is **intentional UX design**
+- "Alert when above $1" semantically means "at or above $1" for users
+- Do NOT suggest changing to strict `>` or `<` operators
+
+### Background Task Store Mutations
+- `updateAlertStatus()` and `markNotificationSent()` calls in `backgroundAlertTask.ts` are **safe and intentional**
+- Zustand handles concurrent updates atomically
+- These operations are idempotent (triggering twice has same result)
+- Do NOT suggest removing these mutations or making background tasks read-only
+
+### Silent Catch Blocks for Fallbacks
+- Empty `catch {}` blocks in these patterns are **intentional fallback handling**:
+  - Hex decoding with fallback to truncated display
+  - `crypto.randomUUID()` with fallback to timestamp-based ID
+  - JSON parsing with fallback to default error message
+  - Batch API operations tracking failure via null return
+- Do NOT suggest adding console.warn/console.error to these - the fallback IS the handling
+
+### KeyboardAvoidingView on Android
+- Using `behavior="height"` on Android is **tested and working** on target device (Pixel 9 Pro)
+- Do NOT suggest changing to `behavior="padding"` or removing for Android
+
+### TextInput Without autoFocus
+- We intentionally do NOT use `autoFocus` on TextInput fields (accessibility concern)
+- This is already documented in coding standards
+
 ## Domain-Specific Context
 
 ### Cardano/ADA Calculations
