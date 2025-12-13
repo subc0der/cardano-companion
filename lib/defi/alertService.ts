@@ -29,6 +29,16 @@ export function checkAlert(
     };
   }
 
+  // Validate currentRate is finite and positive (handles NaN, Infinity from bad API data)
+  if (!isFinite(currentRate) || currentRate <= 0) {
+    return {
+      alert,
+      shouldTrigger: false,
+      currentRate: 0,
+      message: 'Invalid rate',
+    };
+  }
+
   const { config } = alert;
   let shouldTrigger = false;
   let message = '';
