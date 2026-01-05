@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes['2xl'],
-    color: cyberpunk.neonMagenta,
-    textShadowColor: cyberpunk.glowMagenta,
+    color: cyberpunk.neonCyan,
+    textShadowColor: cyberpunk.glowCyan,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 15,
     letterSpacing: 4,

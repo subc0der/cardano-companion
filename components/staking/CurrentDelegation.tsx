@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   poolTicker: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.lg,
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
     letterSpacing: 1,
   },
   poolName: {

@@ -75,7 +75,7 @@ function OptionSelector<T extends string>({
   onChange: (value: T) => void;
 }) {
   return (
-    <View style={styles.settingRow}>
+    <View style={styles.optionSelectorRow}>
       <Text style={styles.settingLabel}>{label}</Text>
       <View style={styles.optionsRow}>
         {options.map((option) => (
@@ -134,6 +134,7 @@ const CURRENCY_OPTIONS: { value: CurrencyDisplay; label: string }[] = [
   { value: 'ADA', label: 'ADA' },
   { value: 'USD', label: 'USD' },
   { value: 'EUR', label: 'EUR' },
+  { value: 'GBP', label: 'GBP' },
 ];
 
 const REFRESH_OPTIONS: { value: RefreshIntervalKey; label: string }[] = [
@@ -206,7 +207,6 @@ export default function SettingsScreen() {
             value={currencyDisplay}
             onChange={setCurrencyDisplay}
           />
-          <Text style={styles.comingSoon}>Fiat conversion coming soon</Text>
         </CyberCard>
 
         {/* Data Section */}
@@ -279,8 +279,8 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes['2xl'],
-    color: cyberpunk.electricBlue,
-    textShadowColor: 'rgba(0, 128, 255, 0.3)',
+    color: cyberpunk.neonCyan,
+    textShadowColor: cyberpunk.glowCyan,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
     letterSpacing: 4,
@@ -298,6 +298,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    minHeight: 48,
+  },
+  optionSelectorRow: {
+    flexDirection: 'column',
+    gap: 12,
     minHeight: 48,
   },
   settingInfo: {
@@ -347,6 +352,7 @@ const styles = StyleSheet.create({
   },
   optionsRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
   },
   optionButton: {
@@ -368,13 +374,6 @@ const styles = StyleSheet.create({
   },
   optionTextActive: {
     color: cyberpunk.neonCyan,
-  },
-  comingSoon: {
-    fontFamily: typography.fonts.mono,
-    fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
-    fontStyle: 'italic',
-    marginTop: 8,
   },
   versionRow: {
     flexDirection: 'row',

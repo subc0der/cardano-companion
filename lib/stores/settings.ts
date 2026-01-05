@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from '../constants/storageKeys';
 
 /** Available currency display options */
-export type CurrencyDisplay = 'ADA' | 'USD' | 'EUR';
+export type CurrencyDisplay = 'ADA' | 'USD' | 'EUR' | 'GBP';
 
 /** Available refresh interval options in milliseconds */
 export const REFRESH_INTERVALS = {

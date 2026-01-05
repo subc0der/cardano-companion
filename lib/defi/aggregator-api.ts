@@ -63,30 +63,55 @@ async function rateLimitedFetch(url: string, options?: RequestInit): Promise<Res
   return fetch(url, options);
 }
 
+/** ADA prices in multiple fiat currencies */
+export interface AdaPrices {
+  usd: number;
+  eur: number;
+  gbp: number;
+}
+
 /**
- * Get current ADA price in USD.
+ * Get current ADA price in USD, EUR, and GBP.
  * GET /ada-price?currency=usd
+ * GET /ada-price?currency=eur
+ * GET /ada-price?currency=gbp
  */
-export async function getAdaPrice(): Promise<{ usd: number; eur: number } | null> {
-  const cacheKey = 'ada-price';
-  const cached = getCached<{ usd: number; eur: number }>(cacheKey);
+export async function getAdaPrice(): Promise<AdaPrices | null> {
+  const cacheKey = 'ada-price-multi';
+  const cached = getCached<AdaPrices>(cacheKey);
   if (cached) return cached;
 
   try {
-    // API requires currency parameter
-    const response = await rateLimitedFetch(`${BASE_URL}/ada-price?currency=usd`);
+    // Fetch all prices in parallel
+    const [usdResponse, eurResponse, gbpResponse] = await Promise.all([
+      rateLimitedFetch(`${BASE_URL}/ada-price?currency=usd`),
+      rateLimitedFetch(`${BASE_URL}/ada-price?currency=eur`),
+      rateLimitedFetch(`${BASE_URL}/ada-price?currency=gbp`),
+    ]);
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ADA price: ${response.status}`);
+    if (!usdResponse.ok) {
+      throw new Error(`Failed to fetch ADA USD price: ${usdResponse.status}`);
     }
 
-    const data = await response.json();
+    const usdData = await usdResponse.json();
     // Response format: { currency: "usd", value: { price: 0.75, change_24h: -2.34 } }
-    const result = {
-      usd: data.value?.price || data.price || 0,
-      eur: 0, // Would need separate call for EUR
-    };
+    const usdPrice = usdData.value?.price || usdData.price || 0;
 
+    // EUR may fail but we still return USD
+    let eurPrice = 0;
+    if (eurResponse.ok) {
+      const eurData = await eurResponse.json();
+      eurPrice = eurData.value?.price || eurData.price || 0;
+    }
+
+    // GBP may fail but we still return USD
+    let gbpPrice = 0;
+    if (gbpResponse.ok) {
+      const gbpData = await gbpResponse.json();
+      gbpPrice = gbpData.value?.price || gbpData.price || 0;
+    }
+
+    const result: AdaPrices = { usd: usdPrice, eur: eurPrice, gbp: gbpPrice };
     setCache(cacheKey, result, DEFI_CONFIG.PRICE_CACHE_TTL_MS);
     return result;
   } catch (error) {

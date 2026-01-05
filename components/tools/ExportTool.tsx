@@ -108,7 +108,7 @@ export function ExportTool() {
                     accessibilityHint="Toggle to include or exclude staking rewards from the export"
                     trackColor={{
                       false: cyberpunk.bgTertiary,
-                      true: cyberpunk.neonMagenta,
+                      true: cyberpunk.neonCyan,
                     }}
                     thumbColor={cyberpunk.textPrimary}
                   />
@@ -171,7 +171,7 @@ export function ExportTool() {
 
             {isLoading && (
               <View style={styles.progressContainer}>
-                <ActivityIndicator size="large" color={cyberpunk.neonMagenta} />
+                <ActivityIndicator size="large" color={cyberpunk.neonCyan} />
                 <Text style={styles.progressText}>{progressText}</Text>
               </View>
             )}
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     backgroundColor: cyberpunk.bgSecondary,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: cyberpunk.neonMagenta,
+    borderColor: cyberpunk.neonCyan,
     padding: 16,
     gap: 16,
   },
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   toolTitle: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.md,
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
     letterSpacing: 2,
     marginBottom: 4,
   },
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     backgroundColor: cyberpunk.bgSecondary,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: cyberpunk.neonMagenta,
+    borderColor: cyberpunk.neonCyan,
     padding: 24,
     width: '100%',
     maxWidth: 360,
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.lg,
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
     textAlign: 'center',
     marginBottom: 24,
     letterSpacing: 2,
@@ -298,8 +298,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   filterButtonActive: {
-    borderColor: cyberpunk.neonMagenta,
-    backgroundColor: 'rgba(255, 0, 255, 0.1)',
+    borderColor: cyberpunk.neonCyan,
+    backgroundColor: 'rgba(0, 255, 255, 0.1)',
   },
   filterButtonText: {
     fontFamily: typography.fonts.mono,
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     color: cyberpunk.textMuted,
   },
   filterButtonTextActive: {
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
   },
   actions: {
     flexDirection: 'row',
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   progressText: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
     marginTop: 16,
   },
   resultContainer: {
