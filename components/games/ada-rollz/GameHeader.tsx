@@ -119,8 +119,8 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.lg,
-    color: cyberpunk.neonYellow,
-    textShadowColor: 'rgba(255, 255, 0, 0.3)',
+    color: cyberpunk.neonCyan,
+    textShadowColor: cyberpunk.glowCyan,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
     letterSpacing: 2,
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   chipLabel: {
     fontFamily: typography.fonts.primary,
-    fontSize: 9,
+    fontSize: typography.sizes.xs,
     color: cyberpunk.textMuted,
     letterSpacing: 1,
   },

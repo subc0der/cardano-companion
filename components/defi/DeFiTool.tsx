@@ -394,13 +394,13 @@ const styles = StyleSheet.create({
     backgroundColor: cyberpunk.bgSecondary,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: cyberpunk.neonMagenta,
+    borderColor: cyberpunk.neonCyan,
     padding: 16,
     gap: 16,
   },
   toolIcon: {
     fontSize: 32,
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
     fontFamily: typography.fonts.primary,
   },
   toolInfo: {
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   toolTitle: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.md,
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
     letterSpacing: 2,
     marginBottom: 4,
   },
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xl,
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
     letterSpacing: 3,
   },
   closeButton: {

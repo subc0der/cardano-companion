@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontFamily: typography.fonts.mono,
-    fontSize: 9,
+    fontSize: typography.sizes.xs,
     color: cyberpunk.textMuted,
     marginBottom: 2,
   },
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     fontFamily: typography.fonts.mono,
-    fontSize: 9,
+    fontSize: typography.sizes.xs,
     color: cyberpunk.neonCyan,
     letterSpacing: 1,
   },

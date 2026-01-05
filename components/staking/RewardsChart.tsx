@@ -63,7 +63,7 @@ export function RewardsChart({ stakeAddress }: RewardsChartProps) {
       <View style={styles.container}>
         <Text style={styles.sectionTitle}>REWARDS HISTORY</Text>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color={cyberpunk.neonMagenta} />
+          <ActivityIndicator size="small" color={cyberpunk.neonCyan} />
           <Text style={styles.loadingText}>Loading rewards...</Text>
         </View>
       </View>
@@ -184,7 +184,7 @@ export function RewardsChart({ stakeAddress }: RewardsChartProps) {
                 y={y}
                 width={barWidth}
                 height={barHeight}
-                fill={cyberpunk.neonMagenta}
+                fill={cyberpunk.neonCyan}
                 rx={2}
                 opacity={0.8}
               />
@@ -240,13 +240,13 @@ const styles = StyleSheet.create({
     backgroundColor: cyberpunk.bgSecondary,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: cyberpunk.neonMagenta,
+    borderColor: cyberpunk.neonCyan,
     padding: 16,
   },
   sectionTitle: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.neonMagenta,
+    color: cyberpunk.neonCyan,
     letterSpacing: 2,
     marginBottom: 16,
   },

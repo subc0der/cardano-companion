@@ -115,9 +115,9 @@ export function buildNotification(
  */
 export function formatAlertRate(rate: number): string {
   if (!isFinite(rate)) return '---';
-  if (rate >= 1000) return rate.toLocaleString('en-US', { maximumFractionDigits: 0 });
-  if (rate >= 1) return rate.toLocaleString('en-US', { maximumFractionDigits: 4 });
-  return rate.toLocaleString('en-US', { maximumFractionDigits: 8 });
+  if (rate >= 1000) return rate.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  if (rate >= 1) return rate.toLocaleString(undefined, { maximumFractionDigits: 4 });
+  return rate.toLocaleString(undefined, { maximumFractionDigits: 8 });
 }
 
 /**

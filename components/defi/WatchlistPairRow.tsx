@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
 import { usePriceAlertStore } from '../../lib/stores/priceAlertStore';
+import { useSettingsStore } from '../../lib/stores/settings';
+import { useFiatPrice, getCurrencySymbol } from '../../lib/hooks/useFiatPrice';
 import type { TokenPair } from '../../lib/defi/types';
 import { PairAlertSection } from './PairAlertSection';
 
@@ -19,6 +21,8 @@ const STALE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
 export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }: WatchlistPairRowProps) {
   const [expanded, setExpanded] = useState(false);
   const { getAlertsForPair } = usePriceAlertStore();
+  const currencyDisplay = useSettingsStore((state) => state.currencyDisplay);
+  const { prices } = useFiatPrice();
 
   const pairAlerts = getAlertsForPair(pair.id);
   const activeAlertCount = pairAlerts.filter(a => a.status === 'active').length;
@@ -29,11 +33,15 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
     ? Date.now() - pair.lastUpdated > STALE_THRESHOLD_MS
     : false;
 
+  // Show fiat value for ADA pairs when fiat currency is selected
+  const isAdaPair = pair.tokenIn.id === 'lovelace';
+  const showFiat = currencyDisplay !== 'ADA' && isAdaPair && prices && pair.lastRate;
+
   const formatRate = (rate: number | null): string => {
     if (rate === null || !isFinite(rate)) return '---';
-    if (rate >= 1000) return rate.toLocaleString('en-US', { maximumFractionDigits: 0 });
-    if (rate >= 1) return rate.toLocaleString('en-US', { maximumFractionDigits: 2 });
-    return rate.toLocaleString('en-US', { maximumFractionDigits: 6 });
+    if (rate >= 1000) return rate.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    if (rate >= 1) return rate.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    return rate.toLocaleString(undefined, { maximumFractionDigits: 6 });
   };
 
   const formatChange = (change: number | null): string => {
@@ -54,6 +62,36 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
     if (change > 0) return 'caret-up';
     if (change < 0) return 'caret-down';
     return 'remove';
+  };
+
+  // Calculate fiat value per token (1 ADA = X tokens, so 1 token = 1/X ADA)
+  const getFiatPerToken = (): string | null => {
+    if (!showFiat || !pair.lastRate || !prices) return null;
+    const adaPerToken = 1 / pair.lastRate;
+    let rate: number;
+    switch (currencyDisplay) {
+      case 'USD':
+        rate = prices.usd;
+        break;
+      case 'EUR':
+        rate = prices.eur;
+        break;
+      case 'GBP':
+        rate = prices.gbp;
+        break;
+      default:
+        return null;
+    }
+    // Don't display if rate fetch failed (rate is 0 or invalid)
+    if (!rate || rate <= 0) {
+      return null;
+    }
+    const fiatPerToken = adaPerToken * rate;
+    const symbol = getCurrencySymbol(currencyDisplay);
+    if (fiatPerToken < 0.01) {
+      return `≈ ${symbol}${fiatPerToken.toFixed(6)}`;
+    }
+    return `≈ ${symbol}${fiatPerToken.toFixed(2)}`;
   };
 
   return (
@@ -79,6 +117,9 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
           <Text style={styles.rateText}>
             1 {pair.tokenIn.ticker} = {formatRate(pair.lastRate)} {pair.tokenOut.ticker}
           </Text>
+          {showFiat && (
+            <Text style={styles.fiatRate}>{getFiatPerToken()} per {pair.tokenOut.ticker}</Text>
+          )}
         </View>
 
         {/* Price Change */}
@@ -199,6 +240,12 @@ const styles = StyleSheet.create({
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
     color: cyberpunk.neonCyan,
+  },
+  fiatRate: {
+    fontFamily: typography.fonts.mono,
+    fontSize: typography.sizes.xs,
+    color: cyberpunk.textSecondary,
+    marginTop: 2,
   },
   changeContainer: {
     flexDirection: 'row',

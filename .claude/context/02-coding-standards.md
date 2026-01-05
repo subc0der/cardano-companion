@@ -155,3 +155,18 @@ These patterns are intentional and should NOT be changed despite automated revie
 - Tested and working on target device (Pixel 9 Pro)
 - `behavior="padding"` causes issues with this UI layout
 - DO NOT change to padding or remove for Android
+
+### Parallel API Fetching for Fiat Prices
+- `getAdaPrice()` uses `Promise.all()` to fetch USD/EUR/GBP prices in parallel
+- This is intentional despite rate limiting concerns because:
+  1. The external API (CoinGecko via TapTools) handles its own rate limiting
+  2. Three concurrent requests is not excessive
+  3. Sequential fetching would triple the latency (poor UX)
+  4. Results are cached for 60 seconds, so bursts are infrequent
+- DO NOT change to sequential fetching
+
+### Internationalization (i18n) - Number Formatting
+- All `toLocaleString()` calls use `undefined` for locale parameter
+- This allows device locale to format numbers appropriately (e.g., "1.234,56" in Germany)
+- DO NOT hardcode `'en-US'` or any specific locale
+- Pattern: `value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })`
