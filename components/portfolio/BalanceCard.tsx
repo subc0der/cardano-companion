@@ -19,7 +19,7 @@ export function BalanceCard({ ada, rewardsAda, isLoading }: BalanceCardProps) {
 
   const formatAda = (amount: number): string => {
     if (hideBalances) return '****';
-    return amount.toLocaleString('en-US', {
+    return amount.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
@@ -27,7 +27,7 @@ export function BalanceCard({ ada, rewardsAda, isLoading }: BalanceCardProps) {
 
   const formatRewards = (rewards: number): string => {
     if (hideBalances) return '(**** unclaimed rewards)';
-    const rewardsStr = rewards.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const rewardsStr = rewards.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return `(${rewardsStr} unclaimed rewards)`;
   };
 

@@ -24,7 +24,7 @@ export function lovelaceToAda(lovelace: string): number {
  */
 export function formatAda(lovelace: string, decimals: number = 2): string {
   const ada = lovelaceToAda(lovelace);
-  return ada.toLocaleString('en-US', {
+  return ada.toLocaleString(undefined, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });

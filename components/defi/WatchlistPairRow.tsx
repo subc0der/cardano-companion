@@ -39,9 +39,9 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
 
   const formatRate = (rate: number | null): string => {
     if (rate === null || !isFinite(rate)) return '---';
-    if (rate >= 1000) return rate.toLocaleString('en-US', { maximumFractionDigits: 0 });
-    if (rate >= 1) return rate.toLocaleString('en-US', { maximumFractionDigits: 2 });
-    return rate.toLocaleString('en-US', { maximumFractionDigits: 6 });
+    if (rate >= 1000) return rate.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    if (rate >= 1) return rate.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    return rate.toLocaleString(undefined, { maximumFractionDigits: 6 });
   };
 
   const formatChange = (change: number | null): string => {
@@ -81,6 +81,10 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
         break;
       default:
         return null;
+    }
+    // Don't display if rate fetch failed (rate is 0 or invalid)
+    if (!rate || rate <= 0) {
+      return null;
     }
     const fiatPerToken = adaPerToken * rate;
     const symbol = getCurrencySymbol(currencyDisplay);

@@ -98,6 +98,11 @@ export function formatFiatValue(
       return '---';
   }
 
+  // Return placeholder if rate fetch failed (rate is 0 or invalid)
+  if (!rate || rate <= 0) {
+    return '---';
+  }
+
   const fiatValue = adaAmount * rate;
   return `${symbol}${fiatValue.toLocaleString(undefined, {
     minimumFractionDigits: 2,
