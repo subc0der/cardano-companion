@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   toolDescription: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.neonCyan,
   },
   modalContainer: {
     flex: 1,
@@ -160,14 +160,14 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: cyberpunk.textMuted,
+    borderColor: cyberpunk.electricBlue,
     alignItems: 'center',
     justifyContent: 'center',
   },
   closeButtonText: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.md,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
   modalContent: {
     flex: 1,

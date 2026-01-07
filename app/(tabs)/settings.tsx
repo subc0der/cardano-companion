@@ -175,7 +175,7 @@ export default function SettingsScreen() {
 
         {/* Privacy Section */}
         <SectionTitle>PRIVACY</SectionTitle>
-        <CyberCard glowColor="magenta">
+        <CyberCard glowColor="cyan">
           <SettingToggle
             label="Hide Balances"
             description="Replace balance values with asterisks"
@@ -222,7 +222,7 @@ export default function SettingsScreen() {
 
         {/* Game Section */}
         <SectionTitle>GAME</SectionTitle>
-        <CyberCard glowColor="magenta">
+        <CyberCard glowColor="cyan">
           <SettingToggle
             label="Haptic Feedback"
             description="Vibration on dice rolls and actions"
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     letterSpacing: 2,
     marginTop: 16,
     marginBottom: 8,
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   settingDescription: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     marginTop: 2,
   },
   divider: {
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     borderRadius: TOGGLE_HEIGHT / 2,
     backgroundColor: cyberpunk.bgTertiary,
     borderWidth: 1,
-    borderColor: cyberpunk.textMuted,
+    borderColor: cyberpunk.electricBlue,
     justifyContent: 'center',
     paddingHorizontal: KNOB_MARGIN,
   },
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     width: KNOB_SIZE,
     height: KNOB_SIZE,
     borderRadius: KNOB_SIZE / 2,
-    backgroundColor: cyberpunk.textMuted,
+    backgroundColor: cyberpunk.electricBlue,
   },
   toggleKnobActive: {
     backgroundColor: cyberpunk.neonCyan,
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
   optionTextActive: {
     color: cyberpunk.neonCyan,
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   linkArrow: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
   resetButton: {
     marginTop: 24,

@@ -209,7 +209,7 @@ export function TokenWatchlist({ onSelectPair }: TokenWatchlistProps) {
       {/* Pair List */}
       {pairs.length === 0 ? (
         <View style={styles.emptyState}>
-          <Ionicons name="eye-outline" size={48} color={cyberpunk.textMuted} />
+          <Ionicons name="eye-outline" size={48} color={cyberpunk.electricBlue} />
           <Text style={styles.emptyTitle}>No pairs saved</Text>
           <Text style={styles.emptySubtitle}>
             Add token pairs to track their exchange rates
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   headerCount: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
   refreshButton: {
     padding: 8,
@@ -321,13 +321,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.lg,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.neonCyan,
     letterSpacing: 1,
   },
   emptySubtitle: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     textAlign: 'center',
     paddingHorizontal: 32,
   },

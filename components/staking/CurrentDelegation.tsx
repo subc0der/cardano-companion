@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.neonCyan,
   },
   errorText: {
     fontFamily: typography.fonts.mono,
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   notDelegatingHint: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.electricBlue,
     textAlign: 'center',
   },
   poolHeader: {
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   poolName: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.electricBlue,
     marginTop: 2,
   },
   statusBadge: {
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   saturationLabel: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.electricBlue,
   },
   saturationValue: {
     fontFamily: typography.fonts.mono,
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   statLabel: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     marginBottom: 4,
   },
   statValue: {
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
   rewardsTotalLabel: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     marginBottom: 4,
   },
   rewardsTotalValue: {

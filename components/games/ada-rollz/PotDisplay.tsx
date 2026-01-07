@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.electricBlue,
     letterSpacing: 2,
   },
   amount: {
@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
   unit: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
 });

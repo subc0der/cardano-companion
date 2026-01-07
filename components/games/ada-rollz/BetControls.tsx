@@ -5,12 +5,17 @@
  * Includes increment/decrement buttons and current bet display.
  */
 
-import React from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { cyberpunk, adaRollz } from '../../../lib/theme/colors';
 import { typography } from '../../../lib/theme/typography';
 import { MIN_BET_CHIPS } from '../../../lib/games/ada-rollz/constants';
+
+/** Delay before press-and-hold repeat starts (ms) */
+const PRESS_HOLD_DELAY_MS = 400;
+/** Interval between repeats while holding (ms) */
+const PRESS_HOLD_INTERVAL_MS = 80;
 
 interface BetControlsProps {
   /** Current bet amount in chips */
@@ -35,6 +40,41 @@ export function BetControls({
   const canDecrement = currentBet > MIN_BET_CHIPS && !disabled;
   const canIncrement = currentBet < maxBet && !disabled;
 
+  // Refs for press-and-hold timers
+  const holdTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const holdIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const clearHoldTimers = useCallback(() => {
+    if (holdTimeoutRef.current) {
+      clearTimeout(holdTimeoutRef.current);
+      holdTimeoutRef.current = null;
+    }
+    if (holdIntervalRef.current) {
+      clearInterval(holdIntervalRef.current);
+      holdIntervalRef.current = null;
+    }
+  }, []);
+
+  const handlePressIn = useCallback((action: () => void) => {
+    // Fire immediately on press
+    action();
+    // Start hold timer
+    holdTimeoutRef.current = setTimeout(() => {
+      holdIntervalRef.current = setInterval(action, PRESS_HOLD_INTERVAL_MS);
+    }, PRESS_HOLD_DELAY_MS);
+  }, []);
+
+  const handlePressOut = useCallback(() => {
+    clearHoldTimers();
+  }, [clearHoldTimers]);
+
+  // Cleanup timers on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      clearHoldTimers();
+    };
+  }, [clearHoldTimers]);
+
   return (
     <View
       style={styles.container}
@@ -47,11 +87,12 @@ export function BetControls({
       <View style={styles.controlsRow}>
         {/* Decrement button */}
         <Pressable
-          onPress={onDecrement}
+          onPressIn={() => canDecrement && handlePressIn(onDecrement)}
+          onPressOut={handlePressOut}
           disabled={!canDecrement}
           accessibilityRole="button"
           accessibilityLabel="Decrease bet"
-          accessibilityHint={`Decrease bet by 1 chip. Minimum is ${MIN_BET_CHIPS}`}
+          accessibilityHint={`Decrease bet by 1 chip. Minimum is ${MIN_BET_CHIPS}. Hold to repeat.`}
           style={({ pressed }) => [
             styles.button,
             !canDecrement && styles.buttonDisabled,
@@ -73,11 +114,12 @@ export function BetControls({
 
         {/* Increment button */}
         <Pressable
-          onPress={onIncrement}
+          onPressIn={() => canIncrement && handlePressIn(onIncrement)}
+          onPressOut={handlePressOut}
           disabled={!canIncrement}
           accessibilityRole="button"
           accessibilityLabel="Increase bet"
-          accessibilityHint={`Increase bet by 1 chip. Maximum is ${maxBet}`}
+          accessibilityHint={`Increase bet by 1 chip. Maximum is ${maxBet}. Hold to repeat.`}
           style={({ pressed }) => [
             styles.button,
             !canIncrement && styles.buttonDisabled,
@@ -108,7 +150,7 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.electricBlue,
     letterSpacing: 2,
     marginBottom: 6,
   },
@@ -150,6 +192,6 @@ const styles = StyleSheet.create({
   betUnit: {
     fontFamily: typography.fonts.primary,
     fontSize: 9,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
 });

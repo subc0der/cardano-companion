@@ -6,6 +6,7 @@
  */
 
 import type { HandRank, DieValue } from './types';
+import { cyberpunk } from '../../theme/colors';
 
 // Re-export shared dice constant for convenience
 export { DICE_COUNT } from '../shared/dice';
@@ -76,6 +77,12 @@ export const DICE_BORDER_WIDTH_DP = 2;
 
 /** Size of the ADA symbol on each die */
 export const ADA_SYMBOL_SIZE_DP = 10;
+
+/** Size of dots on each die (used when rendering dots instead of ADA symbols) */
+export const DOT_SIZE_DP = 10;
+
+/** Color of dots on dice face */
+export const DICE_DOT_COLOR = cyberpunk.success;
 
 /** Spacing between dice in a hand */
 export const DICE_SPACING_DP = 8;

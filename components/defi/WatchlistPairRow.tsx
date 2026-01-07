@@ -154,7 +154,7 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
           <Ionicons
             name={hasAlerts ? 'notifications' : 'notifications-outline'}
             size={18}
-            color={triggeredAlertCount > 0 ? cyberpunk.warning : hasAlerts ? cyberpunk.neonCyan : cyberpunk.textMuted}
+            color={triggeredAlertCount > 0 ? cyberpunk.warning : hasAlerts ? cyberpunk.neonCyan : cyberpunk.electricBlue}
           />
           {activeAlertCount > 0 && (
             <View style={styles.alertBadge}>
@@ -174,7 +174,7 @@ export function WatchlistPairRow({ pair, onPress, onRemove, isLoading = false }:
           accessibilityRole="button"
           accessibilityLabel={`Remove ${pair.tokenIn.ticker} to ${pair.tokenOut.ticker} pair`}
         >
-          <Ionicons name="trash-outline" size={18} color={cyberpunk.textMuted} />
+          <Ionicons name="trash-outline" size={18} color={cyberpunk.error} />
         </Pressable>
       </Pressable>
 
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   fiatRate: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.electricBlue,
     marginTop: 2,
   },
   changeContainer: {

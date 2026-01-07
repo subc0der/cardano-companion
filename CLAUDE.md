@@ -18,6 +18,11 @@ See `.claude/context/` for detailed documentation:
 - NEVER push without being asked
 - Keep commits small and atomic for code review
 
+### Git Safety
+- NEVER run `git reset --hard` without explicit user approval
+- Before any destructive git operation, always `git stash` uncommitted work first
+- If unsure, commit to a WIP branch: `git checkout -b wip/backup && git add -A && git commit -m "WIP backup"`
+
 ### Code Quality
 - NO magic numbers - use named constants
 - NO hardcoded paths - use environment variables
