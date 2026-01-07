@@ -75,10 +75,7 @@ export const DICE_BORDER_RADIUS_DP = 8;
 /** Border width for dice */
 export const DICE_BORDER_WIDTH_DP = 2;
 
-/** Size of the ADA symbol on each die */
-export const ADA_SYMBOL_SIZE_DP = 10;
-
-/** Size of dots on each die (used when rendering dots instead of ADA symbols) */
+/** Size of dots on each die */
 export const DOT_SIZE_DP = 10;
 
 /** Color of dots on dice face */

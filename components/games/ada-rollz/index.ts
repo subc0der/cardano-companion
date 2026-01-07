@@ -2,7 +2,6 @@
  * ADA Rollz Components - Barrel Export
  */
 
-export { AdaSymbol } from './AdaSymbol';
 export { Dice } from './Dice';
 export { DiceHand } from './DiceHand';
 export { BetControls } from './BetControls';

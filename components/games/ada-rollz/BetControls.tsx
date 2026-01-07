@@ -75,6 +75,16 @@ export function BetControls({
     };
   }, [clearHoldTimers]);
 
+  // Stop interval when bet limits are reached (prevents unnecessary firing)
+  // Clear timers if either limit is reached while holding
+  useEffect(() => {
+    // If we're at min bet and can't decrement, or at max bet and can't increment,
+    // the interval would fire uselessly - so clear it
+    if (holdIntervalRef.current && (!canIncrement || !canDecrement)) {
+      clearHoldTimers();
+    }
+  }, [canIncrement, canDecrement, clearHoldTimers]);
+
   return (
     <View
       style={styles.container}
