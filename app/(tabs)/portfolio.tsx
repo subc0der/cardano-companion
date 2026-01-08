@@ -115,14 +115,14 @@ const styles = StyleSheet.create({
   addressLabel: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     letterSpacing: 2,
     marginBottom: 4,
   },
   address: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.neonCyan,
     marginBottom: 24,
   },
   dataContainer: {

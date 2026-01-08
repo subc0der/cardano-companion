@@ -211,13 +211,13 @@ const styles = StyleSheet.create({
   hintText: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     marginTop: 8,
   },
   waitingText: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.neonCyan,
     fontStyle: 'italic',
   },
 });

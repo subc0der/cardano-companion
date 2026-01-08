@@ -170,3 +170,26 @@ These patterns are intentional and should NOT be changed despite automated revie
 - This allows device locale to format numbers appropriately (e.g., "1.234,56" in Germany)
 - DO NOT hardcode `'en-US'` or any specific locale
 - Pattern: `value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })`
+
+### Press-and-Hold Patterns
+- Use `useRef` for timer IDs (setTimeout/setInterval) - not state, to avoid re-renders
+- Always implement `useEffect` cleanup to clear timers on unmount (memory leak prevention)
+- Add secondary `useEffect` to stop intervals when action limits are reached
+- Pattern for bet controls: clear interval when `canIncrement` or `canDecrement` becomes false
+- Example cleanup:
+  ```tsx
+  useEffect(() => {
+    if (holdIntervalRef.current && (!canIncrement || !canDecrement)) {
+      clearHoldTimers();
+    }
+  }, [canIncrement, canDecrement, clearHoldTimers]);
+  ```
+
+### Cyberpunk Color Theme - Semantic Usage
+- `neonCyan` (#00FFFF): Primary data, active states, interactive elements, CTA components
+- `electricBlue` (#0080FF): Labels, hints, secondary/supporting info
+- `textMuted` and `textSecondary`: Legacy grey colors - replace with above when updating UI
+- Visual hierarchy exceptions are intentional:
+  - DeFi launcher card uses all `neonCyan` (title, icon, description) - it's a CTA element
+  - Watchlist fiat rate uses `electricBlue` - it's secondary to the main crypto rate
+- DO NOT "fix" these to match mechanical color mappings

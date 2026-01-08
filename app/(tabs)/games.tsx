@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.md,
-    color: cyberpunk.textSecondary,
+    color: cyberpunk.neonCyan,
   },
   potContainer: {
     alignItems: 'center',
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   disclaimer: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     textAlign: 'center',
     marginTop: 8,
   },

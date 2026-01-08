@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   chipLabel: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     letterSpacing: 1,
   },
   chipAmount: {

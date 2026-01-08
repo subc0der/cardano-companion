@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     letterSpacing: 2,
     marginBottom: 16,
   },
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   policyId: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.neonCyan,
   },
   tokenQuantity: {
     fontFamily: typography.fonts.mono,
