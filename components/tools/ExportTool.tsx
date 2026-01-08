@@ -311,9 +311,9 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     marginTop: 24,
-    gap: 12,
+    gap: 16,
   },
   progressContainer: {
     alignItems: 'center',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Linking } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Linking, Alert } from 'react-native';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
 import {
@@ -66,9 +66,11 @@ export function SwapQuoteCard({ quote, loading, error }: SwapQuoteCardProps) {
         const canOpen = await Linking.canOpenURL(url);
         if (canOpen) {
           await Linking.openURL(url);
+        } else {
+          Alert.alert('Unable to Open', 'Could not open the DEX link. Please try again.');
         }
-      } catch (error) {
-        console.error('[DeFi] Failed to open DEX swap link:', error);
+      } catch {
+        Alert.alert('Unable to Open', 'Could not open the DEX link. Please try again.');
       }
     }
   };
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     letterSpacing: 2,
   },
   errorContainer: {
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     textAlign: 'center',
   },
   dexBadge: {
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
   amountLabel: {
     fontFamily: typography.fonts.primary,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     letterSpacing: 2,
     marginBottom: 4,
   },
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
   detailValue: {
     fontFamily: typography.fonts.mono,

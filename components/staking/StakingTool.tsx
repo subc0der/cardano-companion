@@ -62,7 +62,6 @@ export function StakingTool() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>STAKING OPTIMIZER</Text>
             <Pressable
               onPress={handleCloseModal}
               style={styles.closeButton}
@@ -71,6 +70,7 @@ export function StakingTool() {
             >
               <Text style={styles.closeButtonText}>X</Text>
             </Pressable>
+            <Text style={styles.modalTitle}>STAKING OPTIMIZER</Text>
           </View>
 
           <ScrollView
@@ -140,14 +140,13 @@ const styles = StyleSheet.create({
     backgroundColor: cyberpunk.bgPrimary,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 50,
     paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: cyberpunk.bgTertiary,
+    gap: 12,
   },
   modalTitle: {
     fontFamily: typography.fonts.primary,

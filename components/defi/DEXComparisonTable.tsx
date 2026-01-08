@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Linking, ActivityIndicator, Alert } from 'react-native';
 import { cyberpunk } from '../../lib/theme/colors';
 import { typography } from '../../lib/theme/typography';
 import {
@@ -78,9 +78,11 @@ export function DEXComparisonTable({
         const canOpen = await Linking.canOpenURL(url);
         if (canOpen) {
           await Linking.openURL(url);
+        } else {
+          Alert.alert('Unable to Open', 'Could not open the DEX link. Please try again.');
         }
-      } catch (error) {
-        console.error('[DeFi] Failed to open DEX link:', error);
+      } catch {
+        Alert.alert('Unable to Open', 'Could not open the DEX link. Please try again.');
       }
     }
   };
@@ -116,10 +118,12 @@ export function DEXComparisonTable({
             accessibilityRole="button"
             accessibilityLabel={`${dexInfo.name}: ${amountOut} ${tokenOut.ticker}`}
           >
-            {/* DEX Name */}
-            <View style={styles.dexInfo}>
-              <View style={[styles.dexDot, { backgroundColor: dexInfo.color }]} />
-              <Text style={styles.dexName}>{dexInfo.shortName}</Text>
+            {/* Header: DEX Name + Badge */}
+            <View style={styles.dexHeader}>
+              <View style={styles.dexInfo}>
+                <View style={[styles.dexDot, { backgroundColor: dexInfo.color }]} />
+                <Text style={styles.dexName}>{dexInfo.shortName}</Text>
+              </View>
               {comparison.isBest && (
                 <View style={styles.bestBadge}>
                   <Text style={styles.bestBadgeText}>BEST</Text>
@@ -127,18 +131,19 @@ export function DEXComparisonTable({
               )}
             </View>
 
-            {/* Amount Out */}
-            <View style={styles.amountContainer}>
+            {/* Amount Row */}
+            <View style={styles.amountRow}>
               <Text style={[styles.amountText, comparison.isBest && styles.amountTextBest]}>
                 {amountOut}
               </Text>
               <Text style={styles.tokenText}>{tokenOut.ticker}</Text>
             </View>
 
-            {/* Difference / Impact */}
-            <View style={styles.statsContainer}>
+            {/* Stats Row */}
+            <View style={styles.statsRow}>
+              <Text style={styles.statsLabel}>Price Impact</Text>
               {diffPercent ? (
-                <Text style={styles.diffText}>{diffPercent}</Text>
+                <Text style={styles.diffText}>{diffPercent} vs best</Text>
               ) : (
                 <Text style={styles.impactText}>{priceImpact}%</Text>
               )}
@@ -157,7 +162,7 @@ export function DEXComparisonTable({
               const dexInfo = DEX_INFO[comparison.protocol];
               return (
                 <View key={comparison.protocol} style={styles.unavailableRow}>
-                  <View style={[styles.dexDot, { backgroundColor: cyberpunk.textMuted }]} />
+                  <View style={[styles.dexDot, { backgroundColor: cyberpunk.electricBlue }]} />
                   <Text style={styles.unavailableName}>{dexInfo.shortName}</Text>
                   <Text style={styles.unavailableReason}>
                     {comparison.reason || 'No liquidity'}
@@ -177,26 +182,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     borderWidth: 1,
-    borderColor: cyberpunk.bgTertiary,
+    borderColor: cyberpunk.neonCyan,
   },
   title: {
     fontFamily: typography.fonts.primary,
-    fontSize: typography.sizes.sm,
-    color: cyberpunk.textMuted,
+    fontSize: typography.sizes.xs,
+    color: cyberpunk.electricBlue,
     letterSpacing: 2,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   loadingContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: 32,
     gap: 12,
   },
   loadingText: {
     fontFamily: typography.fonts.mono,
-    fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    fontSize: typography.sizes.sm,
+    color: cyberpunk.electricBlue,
   },
   errorText: {
     fontFamily: typography.fonts.mono,
@@ -208,76 +212,86 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.sm,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     textAlign: 'center',
     padding: 20,
   },
   dexRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: cyberpunk.bgPrimary,
-    borderRadius: 6,
-    padding: 12,
-    marginBottom: 8,
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: cyberpunk.bgTertiary,
   },
   dexRowBest: {
     borderColor: cyberpunk.neonCyan,
   },
+  dexHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   dexInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
     gap: 8,
   },
   dexDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
   dexName: {
     fontFamily: typography.fonts.primary,
-    fontSize: typography.sizes.sm,
+    fontSize: typography.sizes.md,
     color: cyberpunk.textPrimary,
     letterSpacing: 1,
   },
   bestBadge: {
     backgroundColor: cyberpunk.success,
     borderRadius: 4,
-    paddingVertical: 2,
-    paddingHorizontal: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
   },
   bestBadgeText: {
     fontFamily: typography.fonts.primary,
-    fontSize: 8,
+    fontSize: typography.sizes.xs,
     color: cyberpunk.bgPrimary,
     letterSpacing: 1,
   },
-  amountContainer: {
+  amountRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    gap: 4,
-    flex: 1,
-    justifyContent: 'center',
+    gap: 8,
+    marginBottom: 8,
   },
   amountText: {
     fontFamily: typography.fonts.primary,
-    fontSize: typography.sizes.md,
+    fontSize: typography.sizes['2xl'],
     color: cyberpunk.textPrimary,
   },
   amountTextBest: {
     color: cyberpunk.neonCyan,
+    textShadowColor: cyberpunk.glowCyan,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   },
   tokenText: {
     fontFamily: typography.fonts.mono,
-    fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    fontSize: typography.sizes.md,
+    color: cyberpunk.electricBlue,
   },
-  statsContainer: {
-    alignItems: 'flex-end',
-    minWidth: 50,
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  statsLabel: {
+    fontFamily: typography.fonts.mono,
+    fontSize: typography.sizes.xs,
+    color: cyberpunk.electricBlue,
   },
   diffText: {
     fontFamily: typography.fonts.mono,
@@ -287,10 +301,10 @@ const styles = StyleSheet.create({
   impactText: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.success,
   },
   unavailableSection: {
-    marginTop: 12,
+    marginTop: 8,
     paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: cyberpunk.bgTertiary,
@@ -298,24 +312,24 @@ const styles = StyleSheet.create({
   unavailableTitle: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     marginBottom: 8,
   },
   unavailableRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 4,
+    marginBottom: 6,
   },
   unavailableName: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
   unavailableReason: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.xs,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
     fontStyle: 'italic',
     flex: 1,
   },
