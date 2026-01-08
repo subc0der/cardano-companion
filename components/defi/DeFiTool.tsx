@@ -47,9 +47,8 @@ function isValidPositiveAmount(amount: string, decimals: number): boolean {
   try {
     const rawAmount = parseTokenAmount(amount, decimals);
     return BigInt(rawAmount) > BigInt(0);
-  } catch (error) {
+  } catch {
     // Invalid amount string that can't be parsed
-    console.error('[DeFi] Invalid amount format:', error);
     return false;
   }
 }
@@ -230,7 +229,6 @@ export function DeFiTool() {
         <View style={styles.modalContainer}>
           {/* Header */}
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>DEFI AGGREGATOR</Text>
             <Pressable
               onPress={handleCloseModal}
               style={styles.closeButton}
@@ -239,6 +237,7 @@ export function DeFiTool() {
             >
               <Text style={styles.closeButtonText}>X</Text>
             </Pressable>
+            <Text style={styles.modalTitle}>DEFI AGGREGATOR</Text>
           </View>
 
           {/* Tab Navigation */}
@@ -423,14 +422,13 @@ const styles = StyleSheet.create({
     backgroundColor: cyberpunk.bgPrimary,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 50,
     paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: cyberpunk.bgTertiary,
+    gap: 12,
   },
   modalTitle: {
     fontFamily: typography.fonts.primary,
@@ -532,7 +530,7 @@ const styles = StyleSheet.create({
   },
   tokenDropdown: {
     fontSize: 10,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
   amountInput: {
     flex: 1,
@@ -559,7 +557,7 @@ const styles = StyleSheet.create({
   amountOutputText: {
     fontFamily: typography.fonts.mono,
     fontSize: typography.sizes.lg,
-    color: cyberpunk.textMuted,
+    color: cyberpunk.electricBlue,
   },
   swapDirectionButton: {
     alignSelf: 'center',

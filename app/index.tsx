@@ -10,7 +10,6 @@ export default function Index() {
       <View style={styles.content}>
         <Text style={styles.title}>CARDANO</Text>
         <Text style={styles.subtitle}>COMPANION</Text>
-        <Text style={styles.tagline}>Your Cyberpunk Blockchain Toolkit</Text>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -65,13 +64,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 15,
     letterSpacing: 4,
     marginTop: 8,
-  },
-  tagline: {
-    fontFamily: typography.fonts.primary,
-    fontSize: typography.sizes.sm,
-    color: cyberpunk.textSecondary,
-    marginTop: 24,
-    letterSpacing: 2,
   },
   buttonContainer: {
     width: '100%',

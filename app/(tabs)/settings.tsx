@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Constants from 'expo-constants';
 import { cyberpunk } from '../../lib/theme/colors';
@@ -111,9 +111,11 @@ function LinkRow({ label, url }: { label: string; url: string }) {
       const canOpen = await Linking.canOpenURL(url);
       if (canOpen) {
         await Linking.openURL(url);
+      } else {
+        Alert.alert('Unable to Open', 'Could not open the link. Please try again.');
       }
-    } catch (error) {
-      console.error('[Settings] Failed to open URL:', error);
+    } catch {
+      Alert.alert('Unable to Open', 'Could not open the link. Please try again.');
     }
   };
 
