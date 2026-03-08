@@ -1,6 +1,6 @@
 # Cardano Companion
 
-A mobile wallet companion app for Cardano blockchain. View anyone's ADA balance, native tokens, and staking rewards - just by entering hteir ADA $Handle.
+A mobile wallet companion app for Cardano blockchain. View anyone's ADA balance, native tokens, and staking rewards - just by entering their ADA $Handle.
 
 ## Features
 
