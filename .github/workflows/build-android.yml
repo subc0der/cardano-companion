@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK & AAB
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Release tag to attach APK to (optional)'
+        description: 'Release tag to attach builds to (optional)'
         required: false
         type: string
 
@@ -45,14 +45,15 @@ jobs:
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
 
-      - name: Build release APK
+      - name: Build release APK and AAB
         working-directory: android
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease bundleRelease
 
-      - name: Rename APK with version
+      - name: Rename builds with version
         run: |
           VERSION=${{ github.event.release.tag_name || inputs.release_tag || 'dev' }}
           mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/cardano-companion-${VERSION}.apk
+          mv android/app/build/outputs/bundle/release/app-release.aab android/app/build/outputs/bundle/release/cardano-companion-${VERSION}.aab
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -60,19 +61,29 @@ jobs:
           name: cardano-companion-apk
           path: android/app/build/outputs/apk/release/*.apk
 
-      - name: Upload APK to Release
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cardano-companion-aab
+          path: android/app/build/outputs/bundle/release/*.aab
+
+      - name: Upload builds to Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: android/app/build/outputs/apk/release/*.apk
+          files: |
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload APK to specified release
+      - name: Upload builds to specified release
         if: github.event_name == 'workflow_dispatch' && inputs.release_tag != ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.release_tag }}
-          files: android/app/build/outputs/apk/release/*.apk
+          files: |
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
